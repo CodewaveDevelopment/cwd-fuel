@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
-author 'https://www.github.com/CodineDev' -- Base Refueling System: (https://github.com/InZidiuZ/LegacyFuel), other code by Codine (https://www.github.com/CodineDev).
-description 'cdn-fuel'
+author 'https://www.github.com/CodewaveDevelopment' -- Base Script by https://www.github.com/CodineDev, Other code by Codewave :)
+description 'cwd-fuel'
 version '2.1.9'
 
 client_scripts {
