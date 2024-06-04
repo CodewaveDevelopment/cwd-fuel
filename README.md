@@ -356,7 +356,7 @@ Enjoy using **cwd-fuel**, if you have an issues, [create an issue](https://githu
 <br>
 <br>
 
-![Codine Development Fuel Script Showcase Banner](https://i.imgur.com/HQOH3AX.png)
+![Codewave DevelopmentFuel Script Showcase Banner](https://i.imgur.com/HQOH3AX.png)
 
 ### Demonstration of the script
 
@@ -370,7 +370,7 @@ Here's a couple of videos showcasing the script in action!
 <br>
 <br>
 
-![Codine Development Fuel Script Future Plans Banner](https://i.imgur.com/1RoBsmo.png)
+![Codewave DevelopmentFuel Script Future Plans Banner](https://i.imgur.com/1RoBsmo.png)
 
 ### Future Plans
 
@@ -380,13 +380,13 @@ Here's a couple of videos showcasing the script in action!
 <br>
 <br>
 
-![Codine Development Links Banner](https://i.imgur.com/SAqArzg.png)
+![Codewave DevelopmentLinks Banner](https://i.imgur.com/SAqArzg.png)
 
-### Codine Links
+### Codewave Links
 
-- [Discord](https://discord.gg/Ta6QNnuxM2)
-- [Tebex](https://codine.tebex.io/)
-- [Youtube](https://www.youtube.com/channel/UC3Nr0qtyQP9cGRK1m25pOqg)
+- [Discord](https://discord.gg/asbqTmJSjq)
+- [Tebex](https://codewave-developments.tebex.io/)
+- [Youtube](https://www.youtube.com/channel/UC4wvJ0AIbByD9KTntHwFWbA)
 
 ### Credits:
 
