@@ -1,25 +1,13 @@
-![Codine Development Fuel Script Banner](https://i.imgur.com/qVOMMvW.png)
-
-# _CDN-Fuel (2.1.9)_ 
+# _cwd-fuel 0.0.1_
 
 A highly in-depth fuel system for **FiveM** with support for the **QBCore Framework & QBox Remastered**.
 
 # _Lastest Patch Information_
 
-*Fixes:*
-- Jerry Cans not refuelling at pump.
-- Removed spamming debug print. 
-- Changed the way Air Fuel Zones spawn PolyZones and Props.
-- Player Job Error on load.
-- Syphoning Issue with QB-Inventory.
 
+![CWD Development Fuel Script Features Banner](https://i.imgur.com/ISHQJUL.png)
 
-<br>
-<br>
-
-![Codine Development Fuel Script Features Banner](https://i.imgur.com/ISHQJUL.png)
-
-#### Why should you pick **cdn-fuel**?
+#### Why should you pick **cwd-fuel**?
 
 - Show all gas station blips via Config Options.
 - Vehicle blowing up chance percent via Config Options.
@@ -34,7 +22,7 @@ A highly in-depth fuel system for **FiveM** with support for the **QBCore Framew
 - Toggleable Jerry Cans via Config Options.
 - [CDN-Syphoning](https://github.com/CodineDev/cdn-syphoning) built-in via Config Options.
 - Electric Charging with a [Custom Model](https://i.imgur.com/WDxGoT6.png) & pre-configured locations.
-- [Player Owned Gas Stations](https://www.youtube.com/watch?v=3glln0S2QXo) that can be maintained by the Owner.
+- Player Owned Gas Stations that can be maintained by the Owner.
 - [Highly User Friendly Menus](https://i.imgur.com/f64IxpA.png) for Gas Station Owners.
 - Reserve Levels which are maintained by the Owner of the Gas Station or Unlimited based on Config Options.
 - Renamable Gas Stations on Map with Blacklisted words.
@@ -44,7 +32,7 @@ A highly in-depth fuel system for **FiveM** with support for the **QBCore Framew
 - Official Support for the [OX Library](https://github.com/overextended/ox_lib). (Inventory/Menus/Target)
 
 
-![Codine Development Fuel Script Install Banner](https://i.imgur.com/bEiV8G0.png)
+![CWD Development Fuel Script Install Banner](https://i.imgur.com/bEiV8G0.png)
 
 ### Before your installation:
 Make sure you have the following dependencies, otherwise, issues most likely will arise:
@@ -60,23 +48,23 @@ Make sure you have the following dependencies, otherwise, issues most likely wil
 
 ### Begin your installation
 
-Here, we shall provide a step-by-step guide on installing cdn-fuel to your server and making it work with other scripts you may already have installed.
+Here, we shall provide a step-by-step guide on installing cwd-fuel to your server and making it work with other scripts you may already have installed.
 
 ### Step 1:
 
-First, we will start by renaming the resource "cdn-fuel-main" to just "cdn-fuel". <br> <br> Next, we will drag the "cdn-fuel" resource into your desired folder in your servers resources directory.
+First, we will start by renaming the resource "cwd-fuel-main" to just "cwd-fuel". <br> <br> Next, we will drag the "cwd-fuel" resource into your desired folder in your servers resources directory.
 
 ![Step 1](https://i.imgur.com/8kg0LWe.gif)
 
 ### Step 2:
 
-Next, we're going to drag the sounds from the *cdn-fuel/assets/sounds* folder in cdn-fuel, into your interact-sounds folder located at *resources/[standalone]/interact-sound/client/html/sounds*
+Next, we're going to drag the sounds from the *cwd-fuel/assets/sounds* folder in cwd-fuel, into your interact-sounds folder located at *resources/[standalone]/interact-sound/client/html/sounds*
 
 ![explorer_8jBjdkgaeQ](https://user-images.githubusercontent.com/95599217/209605265-c8f67612-b8df-4c38-bf23-0c355cfa6c8e.gif)
 
 ### Step 3:
 
-Next, we're going to open our entire resources folder in whichever IDE you use, (we will be using Visual Studio Code for this example) and replace all of your current exports titled "LegacyFuel", "ps-fuel" or "lj-fuel", with "cdn-fuel". Then you want to ensure cdn-fuel in your server's config file. 
+Next, we're going to open our entire resources folder in whichever IDE you use, (we will be using Visual Studio Code for this example) and replace all of your current exports titled "LegacyFuel", "ps-fuel" or "lj-fuel", with "cwd-fuel". Then you want to ensure cwd-fuel in your server's config file. 
 <br> <br>
 ![step 3](https://i.imgur.com/VZnQpcS.gif)
 
@@ -88,7 +76,7 @@ Next, we're going to run our SQL file, which is needed if we want to use the Pla
 
 <br> 
 
-The file you need to run is located @ _cdn-fuel/assets/sql/cdn-fuel.sql_
+The file you need to run is located @ _cwd-fuel/assets/sql/cwd-fuel.sql_
 
 <br> 
 
@@ -98,7 +86,7 @@ Here is a GIF to run you through the process of running an SQL file:
 
 ### Step 5:
 
-It is highly recommended, if you plan on restarting the script at all, that you move the _stream_ folder & _data_file_ paramaters found in the _fxmanifest.lua_ to another resource for the time being. If you do not do this, you & anyone in the server's game will most likely crash when restarting _cdn-fuel_. The process is very simple & it is outlined in the GIF & Instructions below.
+It is highly recommended, if you plan on restarting the script at all, that you move the _stream_ folder & _data_file_ paramaters found in the _fxmanifest.lua_ to another resource for the time being. If you do not do this, you & anyone in the server's game will most likely crash when restarting _cwd-fuel_. The process is very simple & it is outlined in the GIF & Instructions below.
 
 <br>
 
@@ -106,7 +94,7 @@ It is highly recommended, if you plan on restarting the script at all, that you 
 ![explorer_4tflJ0RowY](https://user-images.githubusercontent.com/95599217/209604683-79e18fa7-96ad-456d-b0c4-20632fb4d04c.gif)
 
 
-Next, we will move our _fxmanifest.lua's_ entries for _data_file_ into our new resource, and **REMOVE IT** from _cdn-fuel_.
+Next, we will move our _fxmanifest.lua's_ entries for _data_file_ into our new resource, and **REMOVE IT** from _cwd-fuel_.
 
 ![jRtUg319mL](https://user-images.githubusercontent.com/95599217/209604640-54e0a450-6a54-4afa-9fab-cda4f02e7091.gif)
 
@@ -116,7 +104,7 @@ data_file 'DLC_ITYP_REQUEST' 'stream/[electric_nozzle]/electric_nozzle_typ.ytyp'
 data_file 'DLC_ITYP_REQUEST' 'stream/[electric_charger]/electric_charger_typ.ytyp'
 ```
 
-Make sure to **ensure** this new resource as well as _cdn-fuel_ in your _server.cfg_!
+Make sure to **ensure** this new resource as well as _cwd-fuel_ in your _server.cfg_!
 
 
 **If you do not want the Jerry Can or Syphoning Kit items, you are now finished with installation.**
@@ -154,13 +142,13 @@ Now we will CTRL+F the following line:
 Once you have found this line, copy the following one line above it:
 <br> 
 ```js
-        } else if (itemData.name == "syphoningkit") { // Syphoning Kit (CDN-Fuel or CDN-Syphoning!)
+        } else if (itemData.name == "syphoningkit") { // Syphoning Kit (cwd-fuel or CDN-Syphoning!)
             $(".item-info-title").html("<p>" + itemData.label + "</p>");
             $(".item-info-description").html(
                 "<p>" + "A kit used to syphon gasoline from vehicles! <br><br>" + itemData.info.gasamount + " Liters Inside.</p>" +
                 "</span></p><p style=\"padding-top: .8vh;font-size:11px\"><b>Weight: </b>" + ((itemData.weight * itemData.amount) / 1000).toFixed(1) + " | <b>Amount: </b> " + itemData.amount
             );
-        } else if (itemData.name == "jerrycan") { // Jerry Can (CDN-Fuel!)
+        } else if (itemData.name == "jerrycan") { // Jerry Can (cwd-fuel!)
             $(".item-info-title").html("<p>" + itemData.label + "</p>");
             $(".item-info-description").html(
                 "<p>" + "A Jerry Can, designed to hold fuel! <br><br>" + itemData.info.gasamount + " Liters Inside.</p>" +
@@ -175,7 +163,7 @@ Once you have found this line, copy the following one line above it:
 <br> <br>
 Next, we'll add the item's images into our Inventory resource. This is a simple process.
 <br> <br> 
-Navigate to the cdn-fuel resource and follow this path: *cdn-fuel/assets/images*
+Navigate to the cwd-fuel resource and follow this path: *cwd-fuel/assets/images*
 <br> <br> 
 Once there, select both images and either drag or *CTRL + X and CTRL + V* them into your inventory's image folder, usually the path is: *inventoryname/html/images/*
 <br> <br> 
@@ -220,7 +208,7 @@ Here are some preconfigured shop items if you wish to put them in the shop. (The
             info = { gasamount = 0 }, -- This must be included or, your item will not store fuel properly!
             type = "item",
             slot = 10,
-        }, -- CDN-Fuel / CDN-Syphoning
+        }, -- cwd-fuel / CDN-Syphoning
         [11] = {
             name = "jerrycan",
             price = 750,
@@ -228,7 +216,7 @@ Here are some preconfigured shop items if you wish to put them in the shop. (The
             info = { gasamount = 0 }, -- This must be included or, your item will not store fuel properly!
             type = "item",
             slot = 11,
-        }, -- CDN-Fuel
+        }, -- cwd-fuel
 ```
 <br>
 You will most likely have to change the slot it is in for it to work properly!
@@ -249,7 +237,7 @@ Firstly, this option will have to be added to your *Config.TargetBones* under th
 ```Lua
             {
 				type = "client",
-				event = "cdn-fuel:client:SendMenuToServer",
+				event = "cwd-fuel:client:SendMenuToServer",
 				icon = "fas fa-gas-pump",
 				label = "Insert Nozzle",
 				canInteract = function() return Allowrefuel end
@@ -257,7 +245,7 @@ Firstly, this option will have to be added to your *Config.TargetBones* under th
 	    {
 				type = "client",
 				action = function()
-					TriggerEvent('cdn-fuel:client:electric:RefuelMenu')
+					TriggerEvent('cwd-fuel:client:electric:RefuelMenu')
 				end,
 				icon = "fas fa-bolt",
 				label = "Insert Electric Nozzle",
@@ -314,7 +302,7 @@ local AllowElectricRefuel = false
 
 
 
-Now, set the *Config.FuelTargetExport* in *cdn-fuel/shared/config.lua* to **true**.
+Now, set the *Config.FuelTargetExport* in *cwd-fuel/shared/config.lua* to **true**.
 
 <br> 
 
@@ -336,7 +324,7 @@ function ToggleEngine(veh)
                 if EngineOn then
                     SetVehicleEngineOn(veh, false, false, true)
                 else
-                    if exports['cdn-fuel']:GetFuel(veh) ~= 0 then
+                    if exports['cwd-fuel']:GetFuel(veh) ~= 0 then
                         SetVehicleEngineOn(veh, true, false, true)
                     else
                         if not NotifyCooldown then
@@ -363,7 +351,7 @@ end
 
 <br> 
 
-Enjoy using **cdn-fuel**, if you have an issues, [create an issue](https://github.com/CodineDev/cdn-fuel/issues/new/choose) on the repository, and we will fix it **ASAP**!
+Enjoy using **cwd-fuel**, if you have an issues, [create an issue](https://github.com/CodewaveDevelopment/cwd-fuel/issues/new/choose) on the repository, and we will fix it **ASAP**!
 
 <br>
 <br>
@@ -403,7 +391,9 @@ Here's a couple of videos showcasing the script in action!
 ### Credits:
 
 - **OX Conversion:**
-<br><br><img src="https://avatars.githubusercontent.com/u/6962192?v=4" width="25" height="25">
+<br><br><img src="https://avatars.githubusercontent.com/u/113228542?s=200&v=4" width="25" height="25">
+**[CodineDev](https://github.com/CodineDev)**
+For making the inital script this is based upon
 **[NoobySloth](https://github.com/noobysloth)**
 for making the initial **OX** portion of the script. 
 <br><br><img src="https://avatars.githubusercontent.com/u/82969741?v=4" width="25" height="25">
