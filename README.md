@@ -394,6 +394,7 @@ Here's a couple of videos showcasing the script in action!
 <br><br><img src="https://avatars.githubusercontent.com/u/113228542?s=200&v=4" width="25" height="25">
 **[CodineDev](https://github.com/CodineDev)**
 For making the inital script this is based upon
+<br><br><img src="https://avatars.githubusercontent.com/u/6962192?v=4" width="25" height="25">
 **[NoobySloth](https://github.com/noobysloth)**
 for making the initial **OX** portion of the script. 
 <br><br><img src="https://avatars.githubusercontent.com/u/82969741?v=4" width="25" height="25">
