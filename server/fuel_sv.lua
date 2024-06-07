@@ -9,14 +9,14 @@ end
 
 --- Events
 if Config.RenewedPhonePayment then
-	RegisterNetEvent('cdn-fuel:server:phone:givebackmoney', function(amount)
+	RegisterNetEvent('cwd-fuel:server:phone:givebackmoney', function(amount)
 		local src = source
 		local player = QBCore.Functions.GetPlayer(src)
 		player.Functions.AddMoney("bank", math.ceil(amount), Lang:t("phone_refund_payment_label"))
 	end)
 end
 
-RegisterNetEvent("cdn-fuel:server:OpenMenu", function(amount, inGasStation, hasWeapon, purchasetype, FuelPrice)
+RegisterNetEvent("cwd-fuel:server:OpenMenu", function(amount, inGasStation, hasWeapon, purchasetype, FuelPrice)
 	local src = source
 	if not src then return end
 	local player = QBCore.Functions.GetPlayer(src)
@@ -27,11 +27,11 @@ RegisterNetEvent("cdn-fuel:server:OpenMenu", function(amount, inGasStation, hasW
 	local total = tonumber(FuelCost + tax)
 	if inGasStation == true and not hasWeapon then
 		if Config.RenewedPhonePayment and purchasetype == "bank" then
-			TriggerClientEvent("cdn-fuel:client:phone:PayForFuel", src, amount)
+			TriggerClientEvent("cwd-fuel:client:phone:PayForFuel", src, amount)
 		else
 			if Config.Ox.Menu then
 				if Config.FuelDebug then print("going to open the context menu (OX)") end
-				TriggerClientEvent('cdn-fuel:client:OpenContextMenu', src, total, amount, purchasetype)
+				TriggerClientEvent('cwd-fuel:client:OpenContextMenu', src, total, amount, purchasetype)
 			else
 				TriggerClientEvent('qb-menu:client:openMenu', src, {
 					{
@@ -50,7 +50,7 @@ RegisterNetEvent("cdn-fuel:server:OpenMenu", function(amount, inGasStation, hasW
 						icon = "fas fa-check-circle",
 						txt = Lang:t("menu_refuel_accept"),
 						params = {
-							event = "cdn-fuel:client:RefuelVehicle",
+							event = "cwd-fuel:client:RefuelVehicle",
 							args = {
 								fuelamounttotal = amount,
 								purchasetype = purchasetype,
@@ -71,7 +71,7 @@ RegisterNetEvent("cdn-fuel:server:OpenMenu", function(amount, inGasStation, hasW
 	end
 end)
 
-RegisterNetEvent("cdn-fuel:server:PayForFuel", function(amount, purchasetype, FuelPrice, electric)
+RegisterNetEvent("cwd-fuel:server:PayForFuel", function(amount, purchasetype, FuelPrice, electric)
 	local src = source
 	if not src then return end
 	local Player = QBCore.Functions.GetPlayer(src)
@@ -93,7 +93,7 @@ RegisterNetEvent("cdn-fuel:server:PayForFuel", function(amount, purchasetype, Fu
 	Player.Functions.RemoveMoney(moneyremovetype, total, payString)
 end)
 
-RegisterNetEvent("cdn-fuel:server:purchase:jerrycan", function(purchasetype)
+RegisterNetEvent("cwd-fuel:server:purchase:jerrycan", function(purchasetype)
 	local src = source if not src then return end
 	local Player = QBCore.Functions.GetPlayer(src) if not Player then return end
 	local tax = GlobalTax(Config.JerryCanPrice) local total = math.ceil(Config.JerryCanPrice + tax)
@@ -123,7 +123,7 @@ end)
 if Config.UseJerryCan then
 	QBCore.Functions.CreateUseableItem("jerrycan", function(source, item)
 		local src = source
-		TriggerClientEvent('cdn-fuel:jerrycan:refuelmenu', src, item)
+		TriggerClientEvent('cwd-fuel:jerrycan:refuelmenu', src, item)
 	end)
 end
 
@@ -141,7 +141,7 @@ if Config.UseSyphoning then
 	end)
 end
 
-RegisterNetEvent('cdn-fuel:info', function(type, amount, srcPlayerData, itemdata)
+RegisterNetEvent('cwd-fuel:info', function(type, amount, srcPlayerData, itemdata)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local srcPlayerData = srcPlayerData
@@ -234,7 +234,7 @@ local function checkVersion(err, responseText, headers)
 end
 
 CreateThread(function()
-	updatePath = "/CodineDev/cdn-fuel"
-	resourceName = "cdn-fuel ("..GetCurrentResourceName()..")"
+	updatePath = "/CodineDev/cwd-fuel"
+	resourceName = "cwd-fuel ("..GetCurrentResourceName()..")"
 	PerformHttpRequest("https://raw.githubusercontent.com"..updatePath.."/master/version", checkVersion, "GET")
 end)

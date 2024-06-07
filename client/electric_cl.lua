@@ -37,7 +37,7 @@ if Config.ElectricVehicleCharging then
                 DeleteRope(Rope)
             end
         elseif state == "pickup" then    
-            TriggerEvent('cdn-fuel:client:grabelectricnozzle')
+            TriggerEvent('cwd-fuel:client:grabelectricnozzle')
             HoldingElectricNozzle = true
         else
             if Config.FuelDebug then print("State is not valid, it must be pickup or putback.") end
@@ -56,7 +56,7 @@ if Config.ElectricVehicleCharging then
                         description = Lang:t("menu_electric_accept"),
                         icon = "fas fa-check-circle",
                         arrow = false, -- puts arrow to the right
-                        event = 'cdn-fuel:client:electric:ChargeVehicle',
+                        event = 'cwd-fuel:client:electric:ChargeVehicle',
                         args = {
                             fuelamounttotal = fuelamounttotal,
                             purchasetype = purchasetype,
@@ -77,7 +77,7 @@ if Config.ElectricVehicleCharging then
         end)
     end
 
-    RegisterNetEvent('cdn-fuel:client:electric:FinalMenu', function(purchasetype)
+    RegisterNetEvent('cwd-fuel:client:electric:FinalMenu', function(purchasetype)
         local money = nil
         if purchasetype == "bank" then money = QBCore.Functions.GetPlayerData().money['bank'] elseif purchasetype == 'cash' then money = QBCore.Functions.GetPlayerData().money['cash'] end
         FuelPrice = (1 * Config.ElectricChargingPrice)
@@ -169,7 +169,7 @@ if Config.ElectricVehicleCharging then
                     QBCore.Functions.Notify(Lang:t("tank_already_full"), "error")
                 else
                     if GlobalTax(ElectricityAmount * FuelPrice) + (ElectricityAmount * FuelPrice) <= money then
-                        TriggerServerEvent('cdn-fuel:server:electric:OpenMenu', ElectricityAmount, IsInGasStation(), false, purchasetype, FuelPrice)
+                        TriggerServerEvent('cwd-fuel:server:electric:OpenMenu', ElectricityAmount, IsInGasStation(), false, purchasetype, FuelPrice)
                     else
                         QBCore.Functions.Notify(Lang:t("not_enough_money"), 'error', 7500)
                     end
@@ -195,7 +195,7 @@ if Config.ElectricVehicleCharging then
                     QBCore.Functions.Notify(Lang:t("tank_already_full"), "error")
                 else
                     if GlobalTax(Electricity.amount * FuelPrice) + (Electricity.amount * FuelPrice) <= money then
-                        TriggerServerEvent('cdn-fuel:server:electric:OpenMenu', Electricity.amount, IsInGasStation(), false, purchasetype, FuelPrice)
+                        TriggerServerEvent('cwd-fuel:server:electric:OpenMenu', Electricity.amount, IsInGasStation(), false, purchasetype, FuelPrice)
                     else
                         QBCore.Functions.Notify(Lang:t("not_enough_money"), 'error', 7500)
                     end
@@ -204,7 +204,7 @@ if Config.ElectricVehicleCharging then
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:client:electric:SendMenuToServer', function()
+    RegisterNetEvent('cwd-fuel:client:electric:SendMenuToServer', function()
         local vehicle = GetClosestVehicle()
         local vehModel = GetEntityModel(vehicle)
         local vehiclename = string.lower(GetDisplayNameFromVehicleModel(vehModel))
@@ -227,7 +227,7 @@ if Config.ElectricVehicleCharging then
                                 description = Lang:t("menu_pay_with_cash") .. playercashamount,
                                 icon = "fas fa-usd",
                                 arrow = false, -- puts arrow to the right
-                                event = "cdn-fuel:client:electric:FinalMenu",
+                                event = "cwd-fuel:client:electric:FinalMenu",
                                 args = 'cash',
                             },
                             {
@@ -235,7 +235,7 @@ if Config.ElectricVehicleCharging then
                                 description = Lang:t("menu_pay_with_bank"),
                                 icon = "fas fa-credit-card",
                                 arrow = false, -- puts arrow to the right
-                                event = "cdn-fuel:client:electric:FinalMenu",
+                                event = "cwd-fuel:client:electric:FinalMenu",
                                 args = 'bank',
                             },
                             {
@@ -262,7 +262,7 @@ if Config.ElectricVehicleCharging then
                             txt = Lang:t("menu_pay_with_cash") .. playercashamount,
                             icon = "fas fa-usd",
                             params = {
-                                event = "cdn-fuel:client:electric:FinalMenu",
+                                event = "cwd-fuel:client:electric:FinalMenu",
                                 args = 'cash',
                             }
                         },
@@ -271,7 +271,7 @@ if Config.ElectricVehicleCharging then
                             txt = Lang:t("menu_pay_with_bank"),
                             icon = "fas fa-credit-card",
                             params = {
-                                event = "cdn-fuel:client:electric:FinalMenu",
+                                event = "cwd-fuel:client:electric:FinalMenu",
                                 args = 'bank',
                             }
                         },
@@ -333,7 +333,7 @@ if Config.ElectricVehicleCharging then
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:client:electric:ChargeVehicle', function(data)
+    RegisterNetEvent('cwd-fuel:client:electric:ChargeVehicle', function(data)
         if Config.FuelDebug then print("Charging Vehicle") end
         if not Config.RenewedPhonePayment then 
             purchasetype = data.purchasetype 
@@ -439,9 +439,9 @@ if Config.ElectricVehicleCharging then
                             if Config.RenewedPhonePayment and purchasetype == "bank" then
                                 local remainingamount = (amount - Refuelamount)
                                 MoneyToGiveBack = (GlobalTax(remainingamount * FuelPrice) + (remainingamount * FuelPrice))
-                                TriggerServerEvent("cdn-fuel:server:phone:givebackmoney", MoneyToGiveBack)
+                                TriggerServerEvent("cwd-fuel:server:phone:givebackmoney", MoneyToGiveBack)
                             else
-                                TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice)
+                                TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice)
                             end
                             local curfuel = GetFuel(vehicle)
                             local finalfuel = (curfuel + Refuelamount)
@@ -474,9 +474,9 @@ if Config.ElectricVehicleCharging then
                     }) then
                         refueling = false
                         if purchasetype == "cash" then
-                            TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, true)
+                            TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, true)
                         elseif purchasetype == "bank" then
-                            TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, true)
+                            TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, true)
                         end
                         local curfuel = GetFuel(vehicle)
                         local finalfuel = (curfuel + fuelamount)
@@ -506,7 +506,7 @@ if Config.ElectricVehicleCharging then
                         disableCombat = true,
                     }, {}, {}, {}, function()
                         refueling = false
-                        if not Config.RenewedPhonePayment or purchasetype == 'cash' then TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, true) end
+                        if not Config.RenewedPhonePayment or purchasetype == 'cash' then TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, true) end
                         local curfuel = GetFuel(vehicle)
                         local finalfuel = (curfuel + fuelamount)
                         if finalfuel > 99 and finalfuel < 100 then
@@ -532,7 +532,7 @@ if Config.ElectricVehicleCharging then
         else return end
     end)
 
-    RegisterNetEvent('cdn-fuel:client:grabelectricnozzle', function()
+    RegisterNetEvent('cwd-fuel:client:grabelectricnozzle', function()
         local ped = PlayerPedId()
         if HoldingElectricNozzle then return end
         LoadAnimDict("anim@am_hold_up@male")
@@ -588,10 +588,10 @@ if Config.ElectricVehicleCharging then
         end)
     end)    
 
-    RegisterNetEvent('cdn-fuel:client:electric:RefuelMenu', function()
+    RegisterNetEvent('cwd-fuel:client:electric:RefuelMenu', function()
         if Config.RenewedPhonePayment then
             if not RefuelPossible then 
-                TriggerEvent('cdn-fuel:client:electric:SendMenuToServer')
+                TriggerEvent('cwd-fuel:client:electric:SendMenuToServer')
             else 
                 if Config.RenewedPhonePayment then
                     if not Cancelledrefuel and not RefuelCancelled then
@@ -599,7 +599,7 @@ if Config.ElectricVehicleCharging then
                             local purchasetype = "bank"
                             local fuelamounttotal = tonumber(RefuelPossibleAmount)
                             if Config.FuelDebug then print("Attempting to charge vehicle.") end
-                            TriggerEvent('cdn-fuel:client:electric:ChargeVehicle', purchasetype, fuelamounttotal)
+                            TriggerEvent('cwd-fuel:client:electric:ChargeVehicle', purchasetype, fuelamounttotal)
                         else
                             QBCore.Functions.Notify(Lang:t("electric_more_than_zero"), 'error', 7500)
                         end
@@ -607,12 +607,12 @@ if Config.ElectricVehicleCharging then
                 end
             end
         else
-            TriggerEvent("cdn-fuel:client:electric:SendMenuToServer")
+            TriggerEvent("cwd-fuel:client:electric:SendMenuToServer")
         end
     end)
 
     if Config.RenewedPhonePayment then
-        RegisterNetEvent('cdn-fuel:client:electric:phone:PayForFuel', function(amount)
+        RegisterNetEvent('cwd-fuel:client:electric:phone:PayForFuel', function(amount)
             FuelPrice = Config.ElectricChargingPrice
             
             -- Police Discount Math --
@@ -673,7 +673,7 @@ if Config.ElectricVehicleCharging then
                 if QBCore.Functions.GetPlayerData().money['bank'] <= (GlobalTax(amount) + amount) then
                     QBCore.Functions.Notify(Lang:t("not_enough_money_in_bank"), "error")
                 else
-                    TriggerServerEvent('cdn-fuel:server:PayForFuel', total, "bank", FuelPrice, true)
+                    TriggerServerEvent('cwd-fuel:server:PayForFuel', total, "bank", FuelPrice, true)
                     RefuelPossible = true
                     RefuelPossibleAmount = amount
                     RefuelPurchaseType = "bank"
@@ -737,7 +737,7 @@ if Config.ElectricVehicleCharging then
             {
                 num = 1,
                 type = "client",
-                event = "cdn-fuel:client:grabelectricnozzle",
+                event = "cwd-fuel:client:grabelectricnozzle",
                 icon = "fas fa-bolt",
                 label = Lang:t("grab_electric_nozzle"),
                 canInteract = function()
@@ -749,7 +749,7 @@ if Config.ElectricVehicleCharging then
             {
                 num = 2,
                 type = "client",
-                event = "cdn-fuel:client:returnnozzle",
+                event = "cwd-fuel:client:returnnozzle",
                 icon = "fas fa-hand",
                 label = Lang:t("return_nozzle"),
                 canInteract = function()

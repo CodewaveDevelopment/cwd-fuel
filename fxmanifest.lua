@@ -30,14 +30,14 @@ shared_scripts {
     -- 'locales/ee.lua', -- Estonian Locales
 }
 
-exports { -- Call with exports['cdn-fuel']:GetFuel or exports['cdn-fuel']:SetFuel
+exports { -- Call with exports['cwd-fuel']:GetFuel or exports['cwd-fuel']:SetFuel
     'GetFuel',
     'SetFuel'
 }
 
 lua54 'yes'
 
-dependencies { -- Make sure these are started before cdn-fuel in your server.cfg!
+dependencies { -- Make sure these are started before cwd-fuel in your server.cfg!
     'PolyZone',
     'interact-sound',
     -- QB-Core Functionality (Input, Target, Menu)

@@ -20,7 +20,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
 
     local function UpdateStationInfo(info)
         if Config.FuelDebug then print("Fetching Information for Location #" ..CurrentLocation) end
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:fetchinfo', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:fetchinfo', function(result)
             if result then
                 for _, v in pairs(result) do
                     -- Reserves --
@@ -67,7 +67,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         label = Lang:t("station_talk_to_ped"),
                         icon = "fas fa-building",
                         action = function()
-                            TriggerEvent('cdn-fuel:stations:openmenu', CurrentLocation)
+                            TriggerEvent('cwd-fuel:stations:openmenu', CurrentLocation)
                         end,
                     },
                 },
@@ -108,7 +108,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
     end
 
     -- Events
-    RegisterNetEvent('cdn-fuel:stations:updatelocation', function(updatedlocation)
+    RegisterNetEvent('cwd-fuel:stations:updatelocation', function(updatedlocation)
         if Config.FuelDebug then if CurrentLocation == nil then CurrentLocation = 0 end
             if updatedlocation == nil then updatedlocation = 0 end
             print('Location: '..CurrentLocation..' has been replaced with a new location: ' ..updatedlocation)
@@ -116,15 +116,15 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         CurrentLocation = updatedlocation or 0
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:buyreserves', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:buyreserves', function(data)
         local location = data.location
         local price = data.price
         local amount = data.amount
-        TriggerServerEvent('cdn-fuel:stations:server:buyreserves', location, price, amount)
+        TriggerServerEvent('cwd-fuel:stations:server:buyreserves', location, price, amount)
         if Config.FuelDebug then print("^5Attempting Purchase of ^2"..amount.. "^5 Fuel Reserves for location #"..location.."! Purchase Price: ^2"..price) end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:client:initiatefuelpickup', function(amountBought, finalReserveAmountAfterPurchase, location)
+    RegisterNetEvent('cwd-fuel:station:client:initiatefuelpickup', function(amountBought, finalReserveAmountAfterPurchase, location)
         if amountBought and finalReserveAmountAfterPurchase and location then
             ReservePickupData = nil
             ReservePickupData = {
@@ -230,7 +230,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                                                                     DeleteEntity(spawnedDeliveryTruck)
                                                                     DeleteEntity(spawnedTankerTrailer)
                                                                     -- Send Data to Server to Put Into Station --
-                                                                    TriggerServerEvent('cdn-fuel:station:server:fuelpickup:finished', ReservePickupData.location)
+                                                                    TriggerServerEvent('cwd-fuel:station:server:fuelpickup:finished', ReservePickupData.location)
                                                                     -- Remove Handler
                                                                     RemoveEventHandler(locationSwapHandler)
                                                                     AwaitingInput = false
@@ -245,7 +245,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                                                     end)
                                                     AwaitingInput = true
                                                 end
-                                                locationSwapHandler = AddEventHandler('cdn-fuel:stations:updatelocation', function(location)
+                                                locationSwapHandler = AddEventHandler('cwd-fuel:stations:updatelocation', function(location)
                                                     if location == nil or location ~= ReservePickupData.location then
                                                         hasArrivedAtLocation = false
                                                         if Config.Ox.DrawText then
@@ -282,21 +282,21 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                 end)
             else
                 -- This is just a worst case scenario event, if the vehicles somehow do not spawn.
-                TriggerServerEvent('cdn-fuel:station:server:fuelpickup:failed', location)
+                TriggerServerEvent('cwd-fuel:station:server:fuelpickup:failed', location)
             end
         else
             if Config.FuelDebug then
-                print("An error has occurred. The amountBought / finalReserveAmountAfterPurchase / location is nil: `cdn-fuel:station:client:initiatefuelpickup`")
+                print("An error has occurred. The amountBought / finalReserveAmountAfterPurchase / location is nil: `cwd-fuel:station:client:initiatefuelpickup`")
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:purchaselocation', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:purchaselocation', function(data)
         local location = data.location
         local CitizenID = QBCore.Functions.GetPlayerData().citizenid
         CanOpen = false
         Wait(5)
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:locationpurchased', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:locationpurchased', function(result)
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned!") end
                 IsOwned = true
@@ -308,19 +308,19 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         Wait(Config.WaitTime)
 
         if not IsOwned then
-            TriggerServerEvent('cdn-fuel:server:buyStation', location, CitizenID)
+            TriggerServerEvent('cwd-fuel:server:buyStation', location, CitizenID)
         elseif IsOwned then
             QBCore.Functions.Notify(Lang:t("station_already_owned"), 'error', 7500)
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:sellstation', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:sellstation', function(data)
         local location = data.location
         local SalePrice = data.SalePrice
         local CitizenID = QBCore.Functions.GetPlayerData().citizenid
         CanSell = false
         Wait(5)
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             if result then
                 if Config.FuelDebug then print("The Location: "..location.." is owned by ID: "..CitizenID) end
                 CanSell = true
@@ -333,21 +333,21 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         Wait(Config.WaitTime)
         if CanSell then
             if Config.FuelDebug then print("Attempting to sell for: $"..SalePrice) end
-            TriggerServerEvent('cdn-fuel:stations:server:sellstation', location)
+            TriggerServerEvent('cwd-fuel:stations:server:sellstation', location)
             if Config.FuelDebug then print("Event Triggered") end
         else
             QBCore.Functions.Notify(Lang:t("station_cannot_sell"), 'error', 7500)
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:purchasereserves:final', function(location, price, amount) -- Menu, seens after selecting the "purchase reserves" option.
+    RegisterNetEvent('cwd-fuel:stations:client:purchasereserves:final', function(location, price, amount) -- Menu, seens after selecting the "purchase reserves" option.
         local location = location
         local price = price
         local amount = amount
         CanOpen = false
         Wait(5)
         if Config.FuelDebug then print("checking ownership of "..location) end
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..location.." is owned by ID: "..CitizenID) end
@@ -371,7 +371,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_station_reserves_purchase_footer")..price.."!",
                             icon = "fas fa-usd",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:buyreserves',
+                            event = 'cwd-fuel:stations:client:buyreserves',
                             args = {
                                 location = location,
                                 price = price,
@@ -402,7 +402,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         txt = Lang:t("menu_station_reserves_purchase_footer")..price.."!",
                         icon = "fas fa-usd",
                         params = {
-                            event = "cdn-fuel:stations:client:buyreserves",
+                            event = "cwd-fuel:stations:client:buyreserves",
                             args = {
                                 location = location,
                                 price = price,
@@ -425,10 +425,10 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:purchasereserves', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:purchasereserves', function(data)
         local CanOpen = false
         local location = data.location
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -475,7 +475,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         if math.ceil(GlobalTax(Reservebuyamount * Config.FuelReservesPrice) + (Reservebuyamount * Config.FuelReservesPrice)) <= bankmoney then
                             local price = math.ceil(GlobalTax(Reservebuyamount * Config.FuelReservesPrice) + (Reservebuyamount * Config.FuelReservesPrice))
                             if Config.FuelDebug then print("Price: "..price) end
-                            TriggerEvent("cdn-fuel:stations:client:purchasereserves:final", location, price, amount)
+                            TriggerEvent("cwd-fuel:stations:client:purchasereserves:final", location, price, amount)
 
                         else
                             QBCore.Functions.Notify(Lang:t("not_enough_money_in_bank"), 'error', 7500)
@@ -507,7 +507,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         if math.ceil(GlobalTax(Reservebuyamount * Config.FuelReservesPrice) + (Reservebuyamount * Config.FuelReservesPrice)) <= bankmoney then
                             local price = math.ceil(GlobalTax(Reservebuyamount * Config.FuelReservesPrice) + (Reservebuyamount * Config.FuelReservesPrice))
                             if Config.FuelDebug then print("Price: "..price) end
-                            TriggerEvent("cdn-fuel:stations:client:purchasereserves:final", location, price, amount)
+                            TriggerEvent("cwd-fuel:stations:client:purchasereserves:final", location, price, amount)
 
                         else
                             QBCore.Functions.Notify(Lang:t("not_enough_money_in_bank"), 'error', 7500)
@@ -518,10 +518,10 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:changefuelprice', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:changefuelprice', function(data)
         CanOpen = false
         local location = data.location
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -557,7 +557,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if NewFuelPrice > Config.MaxFuelPrice then
                         QBCore.Functions.Notify(Lang:t("station_price_too_high"), "error")
                     else
-                        TriggerServerEvent("cdn-fuel:station:server:updatefuelprice", NewFuelPrice, CurrentLocation)
+                        TriggerServerEvent("cwd-fuel:station:server:updatefuelprice", NewFuelPrice, CurrentLocation)
                     end
                 end
             else
@@ -580,17 +580,17 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if NewFuelPrice > Config.MaxFuelPrice then
                         QBCore.Functions.Notify(Lang:t("station_price_too_high"), "error")
                     else
-                        TriggerServerEvent("cdn-fuel:station:server:updatefuelprice", NewFuelPrice, CurrentLocation)
+                        TriggerServerEvent("cwd-fuel:station:server:updatefuelprice", NewFuelPrice, CurrentLocation)
                     end
                 end
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:sellstation:menu', function(data) -- Menu, seen after selecting the Sell this Location option.
+    RegisterNetEvent('cwd-fuel:stations:client:sellstation:menu', function(data) -- Menu, seen after selecting the Sell this Location option.
         local location = data.location
         local CitizenID = QBCore.Functions.GetPlayerData().citizenid
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
                 CanOpen = true
@@ -614,7 +614,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_sell_station_footer_accept")..Comma_Value(SalePrice)..".",
                             icon = "fas fa-usd",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:sellstation',
+                            event = 'cwd-fuel:stations:client:sellstation',
                             args = {
                                 location = location,
                                 SalePrice = SalePrice,
@@ -632,7 +632,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     },
                 })
                 lib.showContext('sellstationmenu')
-                TriggerServerEvent("cdn-fuel:stations:server:stationsold", location)
+                TriggerServerEvent("cwd-fuel:stations:server:stationsold", location)
             else
                 exports['qb-menu']:openMenu({
                     {
@@ -645,7 +645,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         txt = Lang:t("menu_sell_station_footer_accept")..SalePrice..".",
                         icon = "fas fa-usd",
                         params = {
-                            event = "cdn-fuel:stations:client:sellstation",
+                            event = "cwd-fuel:stations:client:sellstation",
                             args = {
                                 location = location,
                                 SalePrice = SalePrice,
@@ -661,14 +661,14 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         }
                     },
                 })
-                TriggerServerEvent("cdn-fuel:stations:server:stationsold", location)
+                TriggerServerEvent("cwd-fuel:stations:server:stationsold", location)
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:changestationname', function() -- Menu for changing the label of the owned station.
+    RegisterNetEvent('cwd-fuel:stations:client:changestationname', function() -- Menu for changing the label of the owned station.
         CanOpen = false
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -705,7 +705,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if string.len(NewName) > Config.NameChangeMaxChar then QBCore.Functions.Notify(Lang:t("station_name_too_long"), 'error') return end
                     if string.len(NewName) < Config.NameChangeMinChar then QBCore.Functions.Notify(Lang:t("station_name_too_short"), 'error') return end
                     Wait(100)
-                    TriggerServerEvent("cdn-fuel:station:server:updatelocationname", NewName, CurrentLocation)
+                    TriggerServerEvent("cwd-fuel:station:server:updatelocationname", NewName, CurrentLocation)
                 end
             else
                 local NewName = exports['qb-input']:ShowInput({
@@ -730,15 +730,15 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if string.len(NewName) > Config.NameChangeMaxChar then QBCore.Functions.Notify(Lang:t("station_name_too_long"), 'error') return end
                     if string.len(NewName) < Config.NameChangeMinChar then QBCore.Functions.Notify(Lang:t("station_name_too_short"), 'error') return end
                     Wait(100)
-                    TriggerServerEvent("cdn-fuel:station:server:updatelocationname", NewName, CurrentLocation)
+                    TriggerServerEvent("cwd-fuel:station:server:updatelocationname", NewName, CurrentLocation)
                 end
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:managemenu', function(location) -- Menu, seen after selecting the Manage this Location Option.
+    RegisterNetEvent('cwd-fuel:stations:client:managemenu', function(location) -- Menu, seen after selecting the Manage this Location Option.
         location = CurrentLocation
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -765,7 +765,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = 'Buy your reserve fuel here!',
                             icon = "fas fa-info-circle",
                             arrow = true, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:purchasereserves',
+                            event = 'cwd-fuel:stations:client:purchasereserves',
                             args = {
                                 location = location,
                             },
@@ -779,7 +779,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = "I want to change the price of fuel at my Gas Station!",
                             icon = "fas fa-usd",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:changefuelprice',
+                            event = 'cwd-fuel:stations:client:changefuelprice',
                             args = {
                                 location = location,
                             },
@@ -793,14 +793,14 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_manage_company_funds_footer"),
                             icon = "fas fa-usd",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:managefunds'
+                            event = 'cwd-fuel:stations:client:managefunds'
                         },
                         {
                             title = Lang:t("menu_manage_change_name_header"),
                             description = Lang:t("menu_manage_change_name_footer"),
                             icon = "fas fa-pen",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:changestationname',
+                            event = 'cwd-fuel:stations:client:changestationname',
                             disabled = not Config.GasStationNameChanges,
                         },
                         {
@@ -808,7 +808,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_manage_sell_station_footer")..Comma_Value(math.percent(Config.GasStationSellPercentage, GasStationCost)),
                             icon = "fas fa-usd",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:sellstation:menu',
+                            event = 'cwd-fuel:stations:client:sellstation:menu',
                             args = {
                                 location = location,
                             },
@@ -843,7 +843,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         icon = "fas fa-usd",
                         txt = Lang:t("menu_manage_purchase_reserves_footer")..Config.FuelReservesPrice..Lang:t("menu_manage_purchase_reserves_footer_2") ,
                         params = {
-                            event = "cdn-fuel:stations:client:purchasereserves",
+                            event = "cwd-fuel:stations:client:purchasereserves",
                             args = {
                                 location = location,
                             }
@@ -855,7 +855,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         icon = "fas fa-usd",
                         txt = "I want to change the price of fuel at my Gas Station! <br> Currently, it is $"..StationFuelPrice..Lang:t("input_alter_fuel_price_header_2") ,
                         params = {
-                            event = "cdn-fuel:stations:client:changefuelprice",
+                            event = "cwd-fuel:stations:client:changefuelprice",
                             args = {
                                 location = location,
                             }
@@ -867,7 +867,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         icon = "fas fa-usd",
                         txt = Lang:t("menu_manage_company_funds_footer"),
                         params = {
-                            event = "cdn-fuel:stations:client:managefunds",
+                            event = "cwd-fuel:stations:client:managefunds",
                         },
                     },
                     {
@@ -876,7 +876,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         txt = Lang:t("menu_manage_change_name_footer"),
                         disabled = not Config.GasStationNameChanges,
                         params = {
-                            event = "cdn-fuel:stations:client:changestationname",
+                            event = "cwd-fuel:stations:client:changestationname",
                         },
                     },
                     {
@@ -884,7 +884,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         txt = Lang:t("menu_manage_sell_station_footer")..math.percent(Config.GasStationSellPercentage, GasStationCost),
                         icon = "fas fa-usd",
                         params = {
-                            event = "cdn-fuel:stations:client:sellstation:menu",
+                            event = "cwd-fuel:stations:client:sellstation:menu",
                             args = {
                                 location = location,
                             }
@@ -903,8 +903,8 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:managefunds', function(location) -- Menu, seen after selecting the Manage this Location Option.
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+    RegisterNetEvent('cwd-fuel:stations:client:managefunds', function(location) -- Menu, seen after selecting the Manage this Location Option.
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -930,7 +930,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_manage_company_funds_withdraw_footer"),
                             icon = "fas fa-arrow-left",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:WithdrawFunds',
+                            event = 'cwd-fuel:stations:client:WithdrawFunds',
                             args = {
                                 location = location,
                             }
@@ -940,7 +940,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_manage_company_funds_deposit_footer"),
                             icon = "fas fa-arrow-right",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:DepositFunds',
+                            event = 'cwd-fuel:stations:client:DepositFunds',
                             args = {
                                 location = location,
                             }
@@ -950,7 +950,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                             description = Lang:t("menu_manage_company_funds_return_footer"),
                             icon = "fas fa-circle-left",
                             arrow = false, -- puts arrow to the right
-                            event = 'cdn-fuel:stations:client:managemenu',
+                            event = 'cwd-fuel:stations:client:managemenu',
                             args = {
                                 location = location,
                             }
@@ -979,7 +979,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         icon = "fas fa-arrow-left",
                         txt = Lang:t("menu_manage_company_funds_withdraw_footer"),
                         params = {
-                            event = "cdn-fuel:stations:client:WithdrawFunds",
+                            event = "cwd-fuel:stations:client:WithdrawFunds",
                             args = {
                                 location = location,
                             }
@@ -990,7 +990,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         icon = "fas fa-arrow-right",
                         txt = Lang:t("menu_manage_company_funds_deposit_footer"),
                         params = {
-                            event = "cdn-fuel:stations:client:DepositFunds",
+                            event = "cwd-fuel:stations:client:DepositFunds",
                             args = {
                                 location = location,
                             }
@@ -1001,7 +1001,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         txt = Lang:t("menu_manage_company_funds_return_footer"),
                         icon = "fas fa-circle-left",
                         params = {
-                            event = "cdn-fuel:stations:client:managemenu",
+                            event = "cwd-fuel:stations:client:managemenu",
                             args = {
                                 location = location,
                             }
@@ -1012,11 +1012,11 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:WithdrawFunds', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:WithdrawFunds', function(data)
         if Config.FuelDebug then print("Triggered Event for: Withdraw!") end
         CanOpen = false
         local location = CurrentLocation
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -1053,7 +1053,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if (StationBalance - WithdrawAmount) < 0 then
                         QBCore.Functions.Notify(Lang:t("station_withdraw_too_much"), 'error', 7500)
                     else
-                        TriggerServerEvent('cdn-fuel:station:server:Withdraw', amount, location, StationBalance)
+                        TriggerServerEvent('cwd-fuel:station:server:Withdraw', amount, location, StationBalance)
                     end
                 end
             else
@@ -1078,18 +1078,18 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if (StationBalance - WithdrawAmount) < 0 then
                         QBCore.Functions.Notify(Lang:t("station_withdraw_too_much"), 'error', 7500)
                     else
-                        TriggerServerEvent('cdn-fuel:station:server:Withdraw', amount, location, StationBalance)
+                        TriggerServerEvent('cwd-fuel:station:server:Withdraw', amount, location, StationBalance)
                     end
                 end
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:DepositFunds', function(data)
+    RegisterNetEvent('cwd-fuel:stations:client:DepositFunds', function(data)
         if Config.FuelDebug then print("Triggered Event for: Deposit!") end
         CanOpen = false
         local location = CurrentLocation
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -1126,7 +1126,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if (DepositAmount) > bankmoney then
                         QBCore.Functions.Notify(Lang:t("station_deposity_too_much"), "error")
                     else
-                        TriggerServerEvent('cdn-fuel:station:server:Deposit', amount, location, StationBalance)
+                        TriggerServerEvent('cwd-fuel:station:server:Deposit', amount, location, StationBalance)
                     end
                 end
             else
@@ -1150,23 +1150,23 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     if (DepositAmount) > bankmoney then
                         QBCore.Functions.Notify(Lang:t("station_deposity_too_much"), "error")
                     else
-                        TriggerServerEvent('cdn-fuel:station:server:Deposit', amount, location, StationBalance)
+                        TriggerServerEvent('cwd-fuel:station:server:Deposit', amount, location, StationBalance)
                     end
                 end
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:Shutoff', function(location)
-        TriggerServerEvent("cdn-fuel:stations:server:Shutoff", location)
+    RegisterNetEvent('cwd-fuel:stations:client:Shutoff', function(location)
+        TriggerServerEvent("cwd-fuel:stations:server:Shutoff", location)
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:client:purchasemenu', function(location) -- Menu, seen after selecting the purchase this location option.
+    RegisterNetEvent('cwd-fuel:stations:client:purchasemenu', function(location) -- Menu, seen after selecting the purchase this location option.
         local bankmoney = QBCore.Functions.GetPlayerData().money['bank']
         local costofstation = Config.GasStations[location].cost + GlobalTax(Config.GasStations[location].cost)
 
         if Config.OneStationPerPerson == true then
-            QBCore.Functions.TriggerCallback('cdn-fuel:server:doesPlayerOwnStation', function(result)
+            QBCore.Functions.TriggerCallback('cwd-fuel:server:doesPlayerOwnStation', function(result)
                 if result then
                     if Config.FuelDebug then print("Player already owns a station, so disallowing purchase.") end
                     PlayerOwnsAStation = true
@@ -1199,7 +1199,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         description = 'I am interested in purchasing this station!',
                         icon = "fas fa-usd",
                         arrow = true, -- puts arrow to the right
-                        event = 'cdn-fuel:stations:client:purchaselocation',
+                        event = 'cwd-fuel:stations:client:purchaselocation',
                         args = {
                             location = location,
                         },
@@ -1237,7 +1237,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     icon = "fas fa-check-circle",
                     txt = Lang:t("menu_purchase_station_confirm_footer")..costofstation..'!' ,
                     params = {
-                        event = "cdn-fuel:stations:client:purchaselocation",
+                        event = "cwd-fuel:stations:client:purchaselocation",
                         args = {
                             location = location,
                         }
@@ -1255,12 +1255,12 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:openmenu', function() -- Menu #1, the first menu you see.
+    RegisterNetEvent('cwd-fuel:stations:openmenu', function() -- Menu #1, the first menu you see.
         DisablePurchase = true
         DisableOwnerMenu = true
         ShutOffDisabled = false
 
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:locationpurchased', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:locationpurchased', function(result)
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned.") end
                 DisablePurchase = true
@@ -1271,7 +1271,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
             end
         end, CurrentLocation)
 
-        QBCore.Functions.TriggerCallback('cdn-fuel:server:isowner', function(result)
+        QBCore.Functions.TriggerCallback('cwd-fuel:server:isowner', function(result)
             local CitizenID = QBCore.Functions.GetPlayerData().citizenid
             if result then
                 if Config.FuelDebug then print("The Location: "..CurrentLocation.." is owned by ID: "..CitizenID) end
@@ -1283,7 +1283,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end, CurrentLocation)
 
         if Config.EmergencyShutOff then
-            QBCore.Functions.TriggerCallback('cdn-fuel:server:checkshutoff', function(result)
+            QBCore.Functions.TriggerCallback('cwd-fuel:server:checkshutoff', function(result)
                 if result == true then
                     PumpState = "disabled."
                 elseif result == false then
@@ -1311,7 +1311,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         description = Lang:t("menu_ped_manage_location_footer"),
                         icon = "fas fa-gas-pump",
                         arrow = false, -- puts arrow to the right
-                        event = 'cdn-fuel:stations:client:managemenu',
+                        event = 'cwd-fuel:stations:client:managemenu',
                         args = CurrentLocation,
                         disabled = DisableOwnerMenu,
                     },
@@ -1320,7 +1320,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         description = Lang:t("menu_ped_purchase_location_footer"),
                         icon = "fas fa-usd",
                         arrow = false, -- puts arrow to the right
-                        event = 'cdn-fuel:stations:client:purchasemenu',
+                        event = 'cwd-fuel:stations:client:purchasemenu',
                         args = CurrentLocation,
                         disabled = DisablePurchase,
                     },
@@ -1329,7 +1329,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                         description = Lang:t("menu_ped_emergency_shutoff_footer")..PumpState,
                         icon = "fas fa-gas-pump",
                         arrow = false, -- puts arrow to the right
-                        event = 'cdn-fuel:stations:client:Shutoff',
+                        event = 'cwd-fuel:stations:client:Shutoff',
                         args = CurrentLocation,
                         disabled = ShutOffDisabled,
                     },
@@ -1357,7 +1357,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     txt = Lang:t("menu_ped_manage_location_footer"),
                     icon = "fas fa-usd",
                     params = {
-                        event = "cdn-fuel:stations:client:managemenu",
+                        event = "cwd-fuel:stations:client:managemenu",
                         args = CurrentLocation,
                     },
                     disabled = DisableOwnerMenu,
@@ -1367,7 +1367,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     txt = Lang:t("menu_ped_purchase_location_footer"),
                     icon = "fas fa-usd",
                     params = {
-                        event = "cdn-fuel:stations:client:purchasemenu",
+                        event = "cwd-fuel:stations:client:purchasemenu",
                         args = CurrentLocation,
                     },
                     disabled = DisablePurchase,
@@ -1377,7 +1377,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     txt = Lang:t("menu_ped_emergency_shutoff_footer")..PumpState,
                     icon = "fas fa-gas-pump",
                     params = {
-                        event = "cdn-fuel:stations:client:Shutoff",
+                        event = "cwd-fuel:stations:client:Shutoff",
                         args = CurrentLocation,
                     },
                     disabled = ShutOffDisabled,

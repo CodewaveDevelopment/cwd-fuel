@@ -1,5 +1,5 @@
 -- Thanks to: https://github.com/AbrahamMoody for the German Translations!
--- PR: https://github.com/CodineDev/cdn-fuel/pull/27
+-- PR: https://github.com/CodineDev/cwd-fuel/pull/27
 
 local Translations = {
     -- Fuel

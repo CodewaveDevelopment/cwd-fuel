@@ -71,7 +71,7 @@ end
 local function FetchStationInfo(info)
 	if not Config.PlayerOwnedGasStationsEnabled then ReserveLevels = 1000 StationFuelPrice = Config.CostMultiplier return end
 	if Config.FuelDebug then print("Fetching Information for Location #" ..CurrentLocation) end
-	QBCore.Functions.TriggerCallback('cdn-fuel:server:fetchinfo', function(result)
+	QBCore.Functions.TriggerCallback('cwd-fuel:server:fetchinfo', function(result)
 		if result then
 			for _, v in pairs(result) do
 				-- Reserves --
@@ -161,7 +161,7 @@ if Config.LeaveEngineRunning then
 end
 
 if Config.ShowNearestGasStationOnly then
-	RegisterNetEvent('cdn-fuel:client:updatestationlabels', function(location, newLabel)
+	RegisterNetEvent('cwd-fuel:client:updatestationlabels', function(location, newLabel)
 		if not location then if Config.FuelDebug then print('location is nil') end return end
 		if not newLabel then if Config.FuelDebug then print('newLabel is nil') end return end
 		if Config.FuelDebug then print("Changing Label for Location #"..location..' to '..newLabel) end
@@ -170,7 +170,7 @@ if Config.ShowNearestGasStationOnly then
 
 	CreateThread(function()
 		if Config.PlayerOwnedGasStationsEnabled then
-			TriggerServerEvent('cdn-fuel:server:updatelocationlabels')
+			TriggerServerEvent('cwd-fuel:server:updatelocationlabels')
 		end
 		Wait(1000)
 		local currentGasBlip = 0
@@ -204,7 +204,7 @@ if Config.ShowNearestGasStationOnly then
 		end
 	end)
 else
-	RegisterNetEvent('cdn-fuel:client:updatestationlabels', function(location, newLabel)
+	RegisterNetEvent('cwd-fuel:client:updatestationlabels', function(location, newLabel)
 		if not location then if Config.FuelDebug then print('location is nil') end return end
 		if not newLabel then if Config.FuelDebug then print('newLabel is nil') end return end
 		if Config.FuelDebug then print("Changing Label for Location #"..location..' to '..newLabel) end
@@ -215,7 +215,7 @@ else
 	end)
 
 	CreateThread(function()
-		TriggerServerEvent('cdn-fuel:server:updatelocationlabels')
+		TriggerServerEvent('cwd-fuel:server:updatelocationlabels')
 		Wait(1000)
 		local gasStationCoords
 		for i = 1, #Config.GasStations, 1 do
@@ -240,10 +240,10 @@ CreateThread(function()
 				CurrentLocation = station_id
 				if Config.FuelDebug then print("New Location: "..station_id) end
 				if Config.PlayerOwnedGasStationsEnabled then
-					TriggerEvent('cdn-fuel:stations:updatelocation', station_id)
+					TriggerEvent('cwd-fuel:stations:updatelocation', station_id)
 				end
 			else
-				TriggerEvent('cdn-fuel:stations:updatelocation', nil)
+				TriggerEvent('cwd-fuel:stations:updatelocation', nil)
 				inGasStation = false
 			end
 		end)
@@ -272,7 +272,7 @@ end)
 
 -- Client Events
 if Config.RenewedPhonePayment then
-	RegisterNetEvent('cdn-fuel:client:phone:PayForFuel', function(amount)
+	RegisterNetEvent('cwd-fuel:client:phone:PayForFuel', function(amount)
 		if Config.PlayerOwnedGasStationsEnabled and RefuelingType ~= 'special' then
 			FetchStationInfo("fuelprice")
 			Wait(100)
@@ -347,7 +347,7 @@ if Config.RenewedPhonePayment then
 			if QBCore.Functions.GetPlayerData().money['bank'] <= total then
 				QBCore.Functions.Notify(Lang:t("not_enough_money"), "error")
 			else
-				TriggerServerEvent('cdn-fuel:server:PayForFuel', total, "bank", FuelPrice, false, CachedFuelPrice)
+				TriggerServerEvent('cwd-fuel:server:PayForFuel', total, "bank", FuelPrice, false, CachedFuelPrice)
 				RefuelPossible = true
 				RefuelPossibleAmount = amount
 				RefuelCancelledFuelCost = FuelPrice
@@ -375,7 +375,7 @@ if Config.Ox.Inventory then
 end
 
 if Config.Ox.Menu then
-	RegisterNetEvent('cdn-fuel:client:OpenContextMenu', function(total, fuelamounttotal, purchasetype)
+	RegisterNetEvent('cwd-fuel:client:OpenContextMenu', function(total, fuelamounttotal, purchasetype)
 		if Config.FuelDebug then print("OpenContextMenu for OX sent from server.") end
 		lib.registerContext({
 			id = 'cdnconfirmationmenu',
@@ -386,7 +386,7 @@ if Config.Ox.Menu then
 					description = Lang:t("menu_refuel_accept"),
 					icon = "fas fa-check-circle",
 					arrow = false, -- puts arrow to the right
-					event = 'cdn-fuel:client:RefuelVehicle',
+					event = 'cwd-fuel:client:RefuelVehicle',
 					args = {
 						fuelamounttotal = fuelamounttotal,
 						purchasetype = purchasetype,
@@ -407,18 +407,18 @@ if Config.Ox.Menu then
 	end)
 end
 
-RegisterNetEvent('cdn-fuel:client:RefuelMenu', function(type)
-	if Config.FuelDebug then print("cdn-fuel:client:refuelmenu") end
+RegisterNetEvent('cwd-fuel:client:RefuelMenu', function(type)
+	if Config.FuelDebug then print("cwd-fuel:client:refuelmenu") end
 	if not type then type = nil end
 	if Config.RenewedPhonePayment then
 		if not RefuelPossible then 
-			TriggerEvent('cdn-fuel:client:SendMenuToServer', type)
+			TriggerEvent('cwd-fuel:client:SendMenuToServer', type)
 		else
 			if not Cancelledrefuel and not RefuelCancelled then
 				if RefuelPossibleAmount then
 					local purchasetype = "bank"
 					local fuelamounttotal = tonumber(RefuelPossibleAmount)
-					TriggerEvent('cdn-fuel:client:RefuelVehicle', purchasetype, fuelamounttotal) 
+					TriggerEvent('cwd-fuel:client:RefuelVehicle', purchasetype, fuelamounttotal) 
 				else
 					if Config.FuelDebug then
 						print("RefuelMenu: MORE THAN ZERO!")
@@ -428,15 +428,15 @@ RegisterNetEvent('cdn-fuel:client:RefuelMenu', function(type)
 			end
 		end
 	else
-		TriggerEvent('cdn-fuel:client:SendMenuToServer', type)
+		TriggerEvent('cwd-fuel:client:SendMenuToServer', type)
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:grabnozzle', function()
+RegisterNetEvent('cwd-fuel:client:grabnozzle', function()
 	if Config.PlayerOwnedGasStationsEnabled then
 		ShutOff = false
 		Wait(50)
-		QBCore.Functions.TriggerCallback('cdn-fuel:server:checkshutoff', function(result)
+		QBCore.Functions.TriggerCallback('cwd-fuel:server:checkshutoff', function(result)
 			if result == true then
 				QBCore.Functions.Notify(Lang:t("emergency_shutoff_active"), 'error', 7500) ShutOff = true return
 			else
@@ -533,7 +533,7 @@ RegisterNetEvent('cdn-fuel:client:grabnozzle', function()
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:returnnozzle', function()
+RegisterNetEvent('cwd-fuel:client:returnnozzle', function()
 	if Config.ElectricVehicleCharging then
 		if IsHoldingElectricNozzle() then
 			SetElectricNozzle("putback")
@@ -569,8 +569,8 @@ AddEventHandler('onResourceStop', function(resource)
 			DeleteObject(Rope)
 		end
 		if Config.TargetResource == 'ox_target' then
-			exports.ox_target:removeGlobalVehicle('cdn-fuel:options:1')
-			exports.ox_target:removeGlobalVehicle('cdn-fuel:options:2')
+			exports.ox_target:removeGlobalVehicle('cwd-fuel:options:1')
+			exports.ox_target:removeGlobalVehicle('cwd-fuel:options:2')
 		end
 		-- Remove Blips from map so they dont double up.
 		for i = 1, #GasStationBlips, 1 do
@@ -579,9 +579,9 @@ AddEventHandler('onResourceStop', function(resource)
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:FinalMenu', function(purchasetype)
+RegisterNetEvent('cwd-fuel:client:FinalMenu', function(purchasetype)
 	if Config.FuelDebug then
-		print('cdn-fuel:client:FinalMenu', purchasetype)
+		print('cwd-fuel:client:FinalMenu', purchasetype)
 	end
 	if RefuelingType == nil then
 		FetchStationInfo("all")
@@ -715,7 +715,7 @@ RegisterNetEvent('cdn-fuel:client:FinalMenu', function(purchasetype)
 				QBCore.Functions.Notify(Lang:t("tank_cannot_fit"), "error")
 			else
 				if GlobalTax(fuelAmount * FuelPrice) + (fuelAmount * FuelPrice) <= money then
-					TriggerServerEvent('cdn-fuel:server:OpenMenu', fuelAmount, inGasStation, false, purchasetype, tonumber(FuelPrice))
+					TriggerServerEvent('cwd-fuel:server:OpenMenu', fuelAmount, inGasStation, false, purchasetype, tonumber(FuelPrice))
 				else
 					QBCore.Functions.Notify(Lang:t("not_enough_money"), 'error', 7500)
 				end
@@ -785,7 +785,7 @@ RegisterNetEvent('cdn-fuel:client:FinalMenu', function(purchasetype)
 					if Config.FuelDebug then
 						print("Player is getting "..fuel.amount.."L of Fuel @ "..FuelPrice..'/L, Total Cost: '..GlobalTax(fuel.amount * FuelPrice) + (fuel.amount * FuelPrice))
 					end
-					TriggerServerEvent('cdn-fuel:server:OpenMenu', fuel.amount, inGasStation, false, purchasetype, tonumber(FuelPrice))
+					TriggerServerEvent('cwd-fuel:server:OpenMenu', fuel.amount, inGasStation, false, purchasetype, tonumber(FuelPrice))
 				else
 					QBCore.Functions.Notify(Lang:t("not_enough_money"), 'error', 7500)
 				end
@@ -794,7 +794,7 @@ RegisterNetEvent('cdn-fuel:client:FinalMenu', function(purchasetype)
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:SendMenuToServer', function(type)
+RegisterNetEvent('cwd-fuel:client:SendMenuToServer', function(type)
 	local vehicle = GetClosestVehicle()
 	local NotElectric = false
 	if Config.ElectricVehicleCharging then
@@ -831,7 +831,7 @@ RegisterNetEvent('cdn-fuel:client:SendMenuToServer', function(type)
 							icon = "fas fa-usd",
 							arrow = false, -- puts arrow to the right
 							onSelect = function ()
-								TriggerEvent('cdn-fuel:client:FinalMenu', 'cash')
+								TriggerEvent('cwd-fuel:client:FinalMenu', 'cash')
 							end,
 						},
 						{
@@ -840,7 +840,7 @@ RegisterNetEvent('cdn-fuel:client:SendMenuToServer', function(type)
 							icon = "fas fa-credit-card",
 							arrow = false, -- puts arrow to the right
 							onSelect = function ()
-								TriggerEvent('cdn-fuel:client:FinalMenu', 'bank')
+								TriggerEvent('cwd-fuel:client:FinalMenu', 'bank')
 							end,
 						},
 						{
@@ -867,7 +867,7 @@ RegisterNetEvent('cdn-fuel:client:SendMenuToServer', function(type)
 						txt = Lang:t("menu_pay_with_cash") .. playercashamount,
 						icon = "fas fa-usd",
 						params = {
-							event = "cdn-fuel:client:FinalMenu",
+							event = "cwd-fuel:client:FinalMenu",
 							args = 'cash',
 						}
 					},
@@ -876,7 +876,7 @@ RegisterNetEvent('cdn-fuel:client:SendMenuToServer', function(type)
 						txt = Lang:t("menu_pay_with_bank"),
 						icon = "fas fa-credit-card",
 						params = {
-							event = "cdn-fuel:client:FinalMenu",
+							event = "cwd-fuel:client:FinalMenu",
 							args = 'bank',
 						}
 					},
@@ -898,7 +898,7 @@ RegisterNetEvent('cdn-fuel:client:SendMenuToServer', function(type)
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
+RegisterNetEvent('cwd-fuel:client:RefuelVehicle', function(data)
 	if RefuelingType == nil then
 		FetchStationInfo("all")
 		Wait(100)
@@ -1030,23 +1030,23 @@ RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
 						if Config.RenewedPhonePayment and purchasetype == "bank" then
 							local remainingamount = (amount - Refuelamount)
 							MoneyToGiveBack = (GlobalTax(remainingamount * RefuelCancelledFuelCost) + (remainingamount * RefuelCancelledFuelCost))
-							TriggerServerEvent("cdn-fuel:server:phone:givebackmoney", MoneyToGiveBack)
+							TriggerServerEvent("cwd-fuel:server:phone:givebackmoney", MoneyToGiveBack)
 							CachedFuelPrice = nil
 						else
-							TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, false, CachedFuelPrice)
+							TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, false, CachedFuelPrice)
 							CachedFuelPrice = nil
 						end
 						if RefuelingType == nil then
 							if Config.PlayerOwnedGasStationsEnabled and not Config.UnlimitedFuel then
-								TriggerServerEvent('cdn-fuel:station:server:updatereserves', "remove", finalrefuelamount, ReserveLevels, CurrentLocation)
+								TriggerServerEvent('cwd-fuel:station:server:updatereserves', "remove", finalrefuelamount, ReserveLevels, CurrentLocation)
 								if CachedFuelPrice ~= nil then
 									if Config.FuelDebug then
 										print("We have a cached price: $"..CachedFuelPrice..", we will credit this to the gas station.")
 									end
-									TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", finalrefuelamount, StationBalance, CurrentLocation, CachedFuelPrice)
+									TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", finalrefuelamount, StationBalance, CurrentLocation, CachedFuelPrice)
 									CachedFuelPrice = nil
 								else
-									TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", finalrefuelamount, StationBalance, CurrentLocation, FuelPrice)
+									TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", finalrefuelamount, StationBalance, CurrentLocation, FuelPrice)
 								end
 							end
 						end
@@ -1082,10 +1082,10 @@ RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
 				}) then
 					refueling = false
 					if purchasetype == "cash" then
-						TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, false, CachedFuelPrice)
+						TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, false, CachedFuelPrice)
 					elseif purchasetype == "bank" then
 						if not Config.RenewedPhonePayment or purchasetype == "cash" then 
-							TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, false, CachedFuelPrice)
+							TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice, false, CachedFuelPrice)
 						end
 					end
 					local curfuel = GetFuel(vehicle)
@@ -1097,15 +1097,15 @@ RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
 					end
 					if RefuelingType == nil then
 						if Config.PlayerOwnedGasStationsEnabled and not Config.UnlimitedFuel then
-							TriggerServerEvent('cdn-fuel:station:server:updatereserves', "remove", fuelamount, ReserveLevels, CurrentLocation)
+							TriggerServerEvent('cwd-fuel:station:server:updatereserves', "remove", fuelamount, ReserveLevels, CurrentLocation)
 							if CachedFuelPrice ~= nil then
 								if Config.FuelDebug then
 									print("We have a cached price: $"..CachedFuelPrice..", we will credit this to the gas station.")
 								end
-								TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, CachedFuelPrice)
+								TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, CachedFuelPrice)
 								CachedFuelPrice = nil
 							else
-								TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, FuelPrice)
+								TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, FuelPrice)
 							end
 						else
 							if Config.FuelDebug then print("Config.PlayerOwnedGasStationsEnabled == false or Config.UnlimitedFuel == true, this means reserves will not be changed.") end
@@ -1134,7 +1134,7 @@ RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
 				}, {}, {}, {}, function()
 					refueling = false
 					if not Config.RenewedPhonePayment or purchasetype == "cash" then
-						TriggerServerEvent('cdn-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice)
+						TriggerServerEvent('cwd-fuel:server:PayForFuel', refillCost, purchasetype, FuelPrice)
 					end
 					local curfuel = GetFuel(vehicle)
 					local finalfuel = (curfuel + fuelamount)
@@ -1145,15 +1145,15 @@ RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
 					end
 					if RefuelingType == nil then
 						if Config.PlayerOwnedGasStationsEnabled and not Config.UnlimitedFuel then
-							TriggerServerEvent('cdn-fuel:station:server:updatereserves', "remove", fuelamount, ReserveLevels, CurrentLocation)
+							TriggerServerEvent('cwd-fuel:station:server:updatereserves', "remove", fuelamount, ReserveLevels, CurrentLocation)
 							if CachedFuelPrice ~= nil then
 								if Config.FuelDebug then
 									print("We have a cached price: $"..CachedFuelPrice..", we will credit this to the gas station.")
 								end
-								TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, CachedFuelPrice)
+								TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, CachedFuelPrice)
 								CachedFuelPrice = nil
 							else
-								TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, FuelPrice)
+								TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", fuelamount, StationBalance, CurrentLocation, FuelPrice)
 							end
 						else
 							if Config.FuelDebug then print("Config.PlayerOwnedGasStationsEnabled == false or Config.UnlimitedFuel == true, this means reserves will not be changed.") end
@@ -1180,7 +1180,7 @@ RegisterNetEvent('cdn-fuel:client:RefuelVehicle', function(data)
 end)
 
 -- Jerry Can --
-RegisterNetEvent('cdn-fuel:jerrycan:refuelmenu', function(itemData)
+RegisterNetEvent('cwd-fuel:jerrycan:refuelmenu', function(itemData)
 	if IsPedInAnyVehicle(PlayerPedId(), false) then QBCore.Functions.Notify(Lang:t("cannot_refuel_inside"), 'error') return end
 	if Config.FuelDebug then print("Item Data: " .. json.encode(itemData)) end
 	local vehicle = GetClosestVehicle()
@@ -1208,7 +1208,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelmenu', function(itemData)
 				options = {
 					{
 						title = Lang:t("menu_header_refuel_jerry_can"),
-						event = 'cdn-fuel:jerrycan:refueljerrycan',
+						event = 'cwd-fuel:jerrycan:refueljerrycan',
 						args = {itemData = itemData},
 						disabled = fulltank
 					},
@@ -1230,7 +1230,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelmenu', function(itemData)
 				options = {
 					{
 						title = Lang:t("menu_header_refuel_vehicle"),
-						event = 'cdn-fuel:jerrycan:refuelvehicle',
+						event = 'cwd-fuel:jerrycan:refuelvehicle',
 						args = {itemData = itemData},
 						disabled = nogas,
 					},
@@ -1258,7 +1258,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelmenu', function(itemData)
 					txt = GasString,
 					icon = "fas fa-gas-pump",
 					params = {
-						event = "cdn-fuel:jerrycan:refueljerrycan",
+						event = "cwd-fuel:jerrycan:refueljerrycan",
 						args = {
 							itemData = itemData,
 						},
@@ -1292,7 +1292,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelmenu', function(itemData)
 					txt = GasString,
 					icon = "fas fa-gas-pump",
 					params = {
-						event = "cdn-fuel:jerrycan:refuelvehicle",
+						event = "cwd-fuel:jerrycan:refuelvehicle",
 						args = {
 							itemData = itemData,
 						},
@@ -1312,7 +1312,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelmenu', function(itemData)
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:jerrycanfinalmenu', function(purchasetype)
+RegisterNetEvent('cwd-fuel:client:jerrycanfinalmenu', function(purchasetype)
 	Moneyamount = nil
 	if purchasetype == 'bank' then
 		Moneyamount = QBCore.Functions.GetPlayerData().money['bank']
@@ -1320,14 +1320,14 @@ RegisterNetEvent('cdn-fuel:client:jerrycanfinalmenu', function(purchasetype)
 		Moneyamount = QBCore.Functions.GetPlayerData().money['cash']
 	end
 	if Moneyamount > math.ceil(Config.JerryCanPrice + GlobalTax(Config.JerryCanPrice)) then
-		TriggerServerEvent('cdn-fuel:server:purchase:jerrycan', purchasetype)
+		TriggerServerEvent('cwd-fuel:server:purchase:jerrycan', purchasetype)
 	else
 		if purchasetype == 'bank' then QBCore.Functions.Notify(Lang:t("not_enough_money_in_bank"), 'error') end
 		if purchasetype == "cash" then QBCore.Functions.Notify(Lang:t("not_enough_money_in_cash"), 'error') end
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:client:purchasejerrycan', function()
+RegisterNetEvent('cwd-fuel:client:purchasejerrycan', function()
 	local playercashamount = QBCore.Functions.GetPlayerData().money['cash']
 	if Config.Ox.Menu then
 		lib.registerContext({
@@ -1338,14 +1338,14 @@ RegisterNetEvent('cdn-fuel:client:purchasejerrycan', function()
 					title = Lang:t("menu_header_cash"),
 					description = Lang:t("menu_pay_with_cash") .. playercashamount,
 					icon = "fas fa-usd",
-					event = 'cdn-fuel:client:jerrycanfinalmenu',
+					event = 'cwd-fuel:client:jerrycanfinalmenu',
 					args = 'cash',
 				},
 				{
 					title = Lang:t("menu_header_bank"),
 					description = Lang:t("menu_pay_with_bank"),
 					icon = "fas fa-credit-card",
-					event = 'cdn-fuel:client:jerrycanfinalmenu',
+					event = 'cwd-fuel:client:jerrycanfinalmenu',
 					args = 'bank',
 				},
 				{
@@ -1371,7 +1371,7 @@ RegisterNetEvent('cdn-fuel:client:purchasejerrycan', function()
 				txt = Lang:t("menu_pay_with_cash") .. playercashamount,
 				icon = "fas fa-usd",
 				params = {
-					event = "cdn-fuel:client:jerrycanfinalmenu",
+					event = "cwd-fuel:client:jerrycanfinalmenu",
 					args = 'cash',
 				}
 			},
@@ -1380,7 +1380,7 @@ RegisterNetEvent('cdn-fuel:client:purchasejerrycan', function()
 				txt = Lang:t("menu_pay_with_bank"),
 				icon = "fas fa-credit-card",
 				params = {
-					event = "cdn-fuel:client:jerrycanfinalmenu",
+					event = "cwd-fuel:client:jerrycanfinalmenu",
 					args = 'bank',
 				}
 			},
@@ -1396,7 +1396,7 @@ RegisterNetEvent('cdn-fuel:client:purchasejerrycan', function()
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:jerrycan:refuelvehicle', function(data)
+RegisterNetEvent('cwd-fuel:jerrycan:refuelvehicle', function(data)
 	local ped = PlayerPedId()
 	local vehicle = GetClosestVehicle()
 	local vehfuel = math.floor(GetFuel(vehicle))
@@ -1465,7 +1465,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelvehicle', function(data)
 						QBCore.Functions.Notify(Lang:t("jerry_can_success_vehicle"), 'success')
 						local JerryCanItemData = data.itemData
 						local srcPlayerData = QBCore.Functions.GetPlayerData()
-						TriggerServerEvent('cdn-fuel:info', "remove", tonumber(refuelAmount), srcPlayerData, JerryCanItemData)
+						TriggerServerEvent('cwd-fuel:info', "remove", tonumber(refuelAmount), srcPlayerData, JerryCanItemData)
 						SetFuel(vehicle, (vehfuel + refuelAmount))
 					else 
 						DeleteObject(JerrycanProp)
@@ -1488,7 +1488,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelvehicle', function(data)
 						QBCore.Functions.Notify(Lang:t("jerry_can_success_vehicle"), 'success')
 						local JerryCanItemData = data.itemData
 						local srcPlayerData = QBCore.Functions.GetPlayerData()
-						TriggerServerEvent('cdn-fuel:info', "remove", tonumber(refuelAmount), srcPlayerData, JerryCanItemData)
+						TriggerServerEvent('cwd-fuel:info', "remove", tonumber(refuelAmount), srcPlayerData, JerryCanItemData)
 						SetFuel(vehicle, (vehfuel + refuelAmount))
 					end, function() -- Play When Cancel
 						DeleteObject(JerrycanProp)
@@ -1541,7 +1541,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelvehicle', function(data)
 						QBCore.Functions.Notify(Lang:t("jerry_can_success_vehicle"), 'success')
 						local JerryCanItemData = data.itemData
 						local srcPlayerData = QBCore.Functions.GetPlayerData()
-						TriggerServerEvent('cdn-fuel:info', "remove", tonumber(refuel.amount), srcPlayerData, JerryCanItemData)
+						TriggerServerEvent('cwd-fuel:info', "remove", tonumber(refuel.amount), srcPlayerData, JerryCanItemData)
 						SetFuel(vehicle, (vehfuel + refuel.amount))
 					else 
 						DeleteObject(JerrycanProp)
@@ -1564,7 +1564,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelvehicle', function(data)
 						QBCore.Functions.Notify(Lang:t("jerry_can_success_vehicle"), 'success')
 						local JerryCanItemData = data.itemData
 						local srcPlayerData = QBCore.Functions.GetPlayerData()
-						TriggerServerEvent('cdn-fuel:info', "remove", tonumber(refuel.amount), srcPlayerData, JerryCanItemData)
+						TriggerServerEvent('cwd-fuel:info', "remove", tonumber(refuel.amount), srcPlayerData, JerryCanItemData)
 						SetFuel(vehicle, (vehfuel + refuel.amount))
 					end, function() -- Play When Cancel
 						DeleteObject(JerrycanProp)
@@ -1580,7 +1580,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refuelvehicle', function(data)
 	end
 end)
 
-RegisterNetEvent('cdn-fuel:jerrycan:refueljerrycan', function(data)
+RegisterNetEvent('cwd-fuel:jerrycan:refueljerrycan', function(data)
 	FetchStationInfo('all')
 	Wait(100)
 	if Config.PlayerOwnedGasStationsEnabled then
@@ -1638,23 +1638,23 @@ RegisterNetEvent('cdn-fuel:jerrycan:refueljerrycan', function(data)
 				QBCore.Functions.Notify(Lang:t("jerry_can_success"), 'success')
 				local srcPlayerData = QBCore.Functions.GetPlayerData()
 				if Config.Ox.Inventory then
-					TriggerServerEvent('cdn-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, itemData)
+					TriggerServerEvent('cwd-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, itemData)
 				else
-					TriggerServerEvent('cdn-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, itemData)
+					TriggerServerEvent('cwd-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, itemData)
 				end
 				
 				if Config.PlayerOwnedGasStationsEnabled and not Config.UnlimitedFuel then
-					TriggerServerEvent('cdn-fuel:station:server:updatereserves', "remove", tonumber(refuelAmount), ReserveLevels, CurrentLocation)
+					TriggerServerEvent('cwd-fuel:station:server:updatereserves', "remove", tonumber(refuelAmount), ReserveLevels, CurrentLocation)
 					if CachedFuelPrice ~= nil then
-						TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", tonumber(refuelAmount), StationBalance, CurrentLocation, CachedFuelPrice)
+						TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", tonumber(refuelAmount), StationBalance, CurrentLocation, CachedFuelPrice)
 					else
-						TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", tonumber(refuelAmount), StationBalance, CurrentLocation, FuelPrice)
+						TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", tonumber(refuelAmount), StationBalance, CurrentLocation, FuelPrice)
 					end
 				else
 					if Config.FuelDebug then print("Config.PlayerOwnedGasStationsEnabled == false or Config.UnlimitedFuel == true, this means reserves will not be changed.") end
 				end
 				local total = (tonumber(refuelAmount) * FuelPrice) + GlobalTax(tonumber(refuelAmount) * FuelPrice)
-				TriggerServerEvent('cdn-fuel:server:PayForFuel', total, "cash", FuelPrice)
+				TriggerServerEvent('cwd-fuel:server:PayForFuel', total, "cash", FuelPrice)
 			else 
 				SetEntityVisible(fuelnozzle, true, 0)
 				DeleteObject(JerrycanProp)
@@ -1704,17 +1704,17 @@ RegisterNetEvent('cdn-fuel:jerrycan:refueljerrycan', function(data)
 				local srcPlayerData = QBCore.Functions.GetPlayerData()
 				local refuelAmount = tonumber(refuel.amount)
 				if Config.Ox.Inventory then
-					TriggerServerEvent('cdn-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, jerryCanData)
+					TriggerServerEvent('cwd-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, jerryCanData)
 				else
-					TriggerServerEvent('cdn-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, jerryCanData)
+					TriggerServerEvent('cwd-fuel:info', "add", tonumber(refuelAmount), srcPlayerData, jerryCanData)
 				end
 				if RefuelingType == nil then	
 					if Config.PlayerOwnedGasStationsEnabled and not Config.UnlimitedFuel then
-						TriggerServerEvent('cdn-fuel:station:server:updatereserves', "remove", tonumber(refuel.amount), ReserveLevels, CurrentLocation)
+						TriggerServerEvent('cwd-fuel:station:server:updatereserves', "remove", tonumber(refuel.amount), ReserveLevels, CurrentLocation)
 						if CachedFuelPrice ~= nil then
-							TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", tonumber(refuel.amount), StationBalance, CurrentLocation, CachedFuelPrice)
+							TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", tonumber(refuel.amount), StationBalance, CurrentLocation, CachedFuelPrice)
 						else
-							TriggerServerEvent('cdn-fuel:station:server:updatebalance', "add", tonumber(refuel.amount), StationBalance, CurrentLocation, FuelPrice)
+							TriggerServerEvent('cwd-fuel:station:server:updatebalance', "add", tonumber(refuel.amount), StationBalance, CurrentLocation, FuelPrice)
 						end
 						
 					else
@@ -1722,7 +1722,7 @@ RegisterNetEvent('cdn-fuel:jerrycan:refueljerrycan', function(data)
 					end
 				end
 				local total = (tonumber(refuel.amount) * FuelPrice) + GlobalTax(tonumber(refuel.amount) * FuelPrice)
-				TriggerServerEvent('cdn-fuel:server:PayForFuel', total, "cash", FuelPrice, false, CachedFuelPrice)
+				TriggerServerEvent('cwd-fuel:server:PayForFuel', total, "cash", FuelPrice, false, CachedFuelPrice)
 			end, function() -- Play When Cancel
 				SetEntityVisible(fuelnozzle, true, 0)
 				DeleteObject(JerrycanProp)
@@ -1954,7 +1954,7 @@ RegisterNetEvent('cdn-syphoning:syphon', function(data)
 									SetFuel(vehicle, removeamount)
 									local syphonData = data.itemData
 									local srcPlayerData = QBCore.Functions.GetPlayerData()
-									TriggerServerEvent('cdn-fuel:info', "add", tonumber(syphonAmount), srcPlayerData, syphonData)
+									TriggerServerEvent('cwd-fuel:info', "add", tonumber(syphonAmount), srcPlayerData, syphonData)
 								else
 									QBCore.Functions.Notify(Lang:t("menu_syphon_vehicle_empty"), 'error')
 								end
@@ -2004,7 +2004,7 @@ RegisterNetEvent('cdn-syphoning:syphon', function(data)
 									SetFuel(vehicle, removeamount)
 									local syphonData = data.itemData
 									local srcPlayerData = QBCore.Functions.GetPlayerData()
-									TriggerServerEvent('cdn-fuel:info', "add", tonumber(syphon.amount), srcPlayerData, syphonData)
+									TriggerServerEvent('cwd-fuel:info', "add", tonumber(syphon.amount), srcPlayerData, syphonData)
 									StopAnimTask(ped, Config.StealAnimDict, Config.StealAnim, 1.0)
 								else
 									QBCore.Functions.Notify(Lang:t("menu_syphon_vehicle_empty"), 'error')
@@ -2056,7 +2056,7 @@ RegisterNetEvent('cdn-syphoning:syphon', function(data)
 							SetFuel(vehicle, cargasamount + tonumber(refuelAmount))
 							local syphonData = data.itemData
 							local srcPlayerData = QBCore.Functions.GetPlayerData()
-							TriggerServerEvent('cdn-fuel:info', "remove", tonumber(refuelAmount), srcPlayerData, syphonData)
+							TriggerServerEvent('cwd-fuel:info', "remove", tonumber(refuelAmount), srcPlayerData, syphonData)
 						else
 							StopAnimTask(ped, Config.JerryCanAnimDict, Config.JerryCanAnim, 1.0)
 							QBCore.Functions.Notify(Lang:t("cancelled"), 'error')
@@ -2096,7 +2096,7 @@ RegisterNetEvent('cdn-syphoning:syphon', function(data)
 							SetFuel(vehicle, cargasamount + tonumber(refuel.amount))
 							local syphonData = data.itemData
 							local srcPlayerData = QBCore.Functions.GetPlayerData()
-							TriggerServerEvent('cdn-fuel:info', "remove", tonumber(refuel.amount), srcPlayerData, syphonData)
+							TriggerServerEvent('cwd-fuel:info', "remove", tonumber(refuel.amount), srcPlayerData, syphonData)
 						end, function() -- Play When Cancel
 							StopAnimTask(ped, Config.JerryCanAnimDict, Config.JerryCanAnim, 1.0)
 							QBCore.Functions.Notify(Lang:t("cancelled"), 'error')
@@ -2139,7 +2139,7 @@ RegisterNetEvent('cdn-syphoning:client:callcops', function(coords)
 end)
 
 -- Helicopter Fueling --
-RegisterNetEvent('cdn-fuel:client:grabnozzle:special', function()
+RegisterNetEvent('cwd-fuel:client:grabnozzle:special', function()
 	local ped = PlayerPedId()
 	if HoldingSpecialNozzle then return end
 	LoadAnimDict("anim@am_hold_up@male")
@@ -2210,7 +2210,7 @@ RegisterNetEvent('cdn-fuel:client:grabnozzle:special', function()
 	end)
 end)
 
-RegisterNetEvent('cdn-fuel:client:returnnozzle:special', function()
+RegisterNetEvent('cwd-fuel:client:returnnozzle:special', function()
 	HoldingSpecialNozzle = false
 	TriggerServerEvent("InteractSound_SV:PlayOnSource", "putbacknozzle", 0.4)
 	Wait(250)
@@ -2325,7 +2325,7 @@ AddEventHandler('onResourceStart', function(resource)
 										QBCore.Functions.Notify(Lang:t("inside_vehicle"), 'error', 1250)
 									else
 										if Config.FuelDebug then print("Attempting to Open Fuel menu for special vehicles.") end
-										TriggerEvent('cdn-fuel:client:RefuelMenu', 'special')
+										TriggerEvent('cwd-fuel:client:RefuelMenu', 'special')
 									end
 								end
 							end
@@ -2488,7 +2488,7 @@ AddEventHandler("QBCore:Client:OnPlayerLoaded", function ()
 									QBCore.Functions.Notify(Lang:t("inside_vehicle"), 'error', 1250)
 								else
 									if Config.FuelDebug then print("Attempting to Open Fuel menu for special vehicles.") end
-									TriggerEvent('cdn-fuel:client:RefuelMenu', 'special')
+									TriggerEvent('cwd-fuel:client:RefuelMenu', 'special')
 								end
 							end
 						end
@@ -2591,7 +2591,7 @@ CreateThread(function()
 	if Config.TargetResource == 'ox_target' then
 		local options = {
 			[1] = {
-				name = 'cdn-fuel:options:1',
+				name = 'cwd-fuel:options:1',
 				icon = "fas fa-gas-pump",
 				label = tostring(Lang:t("input_insert_nozzle")),
 				canInteract = function()
@@ -2599,10 +2599,10 @@ CreateThread(function()
 						return true
 					end
 				end,
-				event = 'cdn-fuel:client:RefuelMenu'
+				event = 'cwd-fuel:client:RefuelMenu'
 			},
 			[2] = {
-				name = 'cdn-fuel:options:2',
+				name = 'cwd-fuel:options:2',
 				icon = "fas fa-bolt",
 				label = tostring(Lang:t("insert_electric_nozzle")),
 				canInteract = function()
@@ -2616,7 +2616,7 @@ CreateThread(function()
 						return false
 					end
 				end,
-				event = "cdn-fuel:client:electric:RefuelMenu",
+				event = "cwd-fuel:client:electric:RefuelMenu",
 			}
 		}
 
@@ -2624,10 +2624,10 @@ CreateThread(function()
 
 		local modelOptions = {
 			[1] = {
-				name = "cdn-fuel:modelOptions:option_1",
+				name = "cwd-fuel:modelOptions:option_1",
 				num = 1,
 				type = "client",
-				event = "cdn-fuel:client:grabnozzle",
+				event = "cwd-fuel:client:grabnozzle",
 				icon = "fas fa-gas-pump",
 				label = Lang:t("grab_nozzle"),
 				canInteract = function()
@@ -2638,10 +2638,10 @@ CreateThread(function()
 				end,
 			},
 			[2] = {
-				name = "cdn-fuel:modelOptions:option_2",
+				name = "cwd-fuel:modelOptions:option_2",
 				num = 2,
 				type = "client",
-				event = "cdn-fuel:client:purchasejerrycan",
+				event = "cwd-fuel:client:purchasejerrycan",
 				icon = "fas fa-fire-flame-simple",
 				label = Lang:t("buy_jerrycan"),
 				canInteract = function()
@@ -2651,10 +2651,10 @@ CreateThread(function()
 				end,
 			},
 			[3] = {
-				name = "cdn-fuel:modelOptions:option_3",
+				name = "cwd-fuel:modelOptions:option_3",
 				num = 3,
 				type = "client",
-				event = "cdn-fuel:client:returnnozzle",
+				event = "cwd-fuel:client:returnnozzle",
 				icon = "fas fa-hand",
 				label = Lang:t("return_nozzle"),
 				canInteract = function()
@@ -2664,10 +2664,10 @@ CreateThread(function()
 				end,
 			},
 			[4] = {
-				name = "cdn-fuel:modelOptions:option_4",
+				name = "cwd-fuel:modelOptions:option_4",
 				num = 4,
 				type = "client",
-				event = "cdn-fuel:client:grabnozzle:special",
+				event = "cwd-fuel:client:grabnozzle:special",
 				icon = "fas fa-gas-pump",
 				label = Lang:t("grab_special_nozzle"),
 				canInteract = function()
@@ -2678,10 +2678,10 @@ CreateThread(function()
 				end,
 			},
 			[5] = {
-				name = "cdn-fuel:modelOptions:option_5",
+				name = "cwd-fuel:modelOptions:option_5",
 				num = 5,
 				type = "client",
-				event = "cdn-fuel:client:returnnozzle:special",
+				event = "cwd-fuel:client:returnnozzle:special",
 				icon = "fas fa-hand",
 				label = Lang:t("return_special_nozzle"),
 				canInteract = function()
@@ -2699,7 +2699,7 @@ CreateThread(function()
 				{
 					type = "client",
 					action = function ()
-						TriggerEvent('cdn-fuel:client:RefuelMenu')
+						TriggerEvent('cwd-fuel:client:RefuelMenu')
 					end,
 					icon = "fas fa-gas-pump",
 					label = Lang:t("input_insert_nozzle"),
@@ -2712,7 +2712,7 @@ CreateThread(function()
 				{
 					type = "client",
 					action = function()
-						TriggerEvent('cdn-fuel:client:electric:RefuelMenu')
+						TriggerEvent('cwd-fuel:client:electric:RefuelMenu')
 					end,
 					icon = "fas fa-bolt",
 					label = Lang:t("insert_electric_nozzle"),
@@ -2737,7 +2737,7 @@ CreateThread(function()
 				{
 					num = 1,
 					type = "client",
-					event = "cdn-fuel:client:grabnozzle",
+					event = "cwd-fuel:client:grabnozzle",
 					icon = "fas fa-gas-pump",
 					label = Lang:t("grab_nozzle"),
 					canInteract = function()
@@ -2750,7 +2750,7 @@ CreateThread(function()
 				{
 					num = 2,
 					type = "client",
-					event = "cdn-fuel:client:purchasejerrycan",
+					event = "cwd-fuel:client:purchasejerrycan",
 					icon = "fas fa-fire-flame-simple",
 					label = Lang:t("buy_jerrycan"),
 					canInteract = function()
@@ -2762,7 +2762,7 @@ CreateThread(function()
 				{
 					num = 3,
 					type = "client",
-					event = "cdn-fuel:client:returnnozzle",
+					event = "cwd-fuel:client:returnnozzle",
 					icon = "fas fa-hand",
 					label = Lang:t("return_nozzle"),
 					canInteract = function()
@@ -2774,7 +2774,7 @@ CreateThread(function()
 				{
 					num = 4,
 					type = "client",
-					event = "cdn-fuel:client:grabnozzle:special",
+					event = "cwd-fuel:client:grabnozzle:special",
 					icon = "fas fa-gas-pump",
 					label = Lang:t("grab_special_nozzle"),
 					canInteract = function()
@@ -2787,7 +2787,7 @@ CreateThread(function()
 				{
 					num = 5,
 					type = "client",
-					event = "cdn-fuel:client:returnnozzle:special",
+					event = "cwd-fuel:client:returnnozzle:special",
 					icon = "fas fa-hand",
 					label = Lang:t("return_special_nozzle"),
 					canInteract = function()

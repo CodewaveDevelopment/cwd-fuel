@@ -25,7 +25,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     local data = result[1]
                     if data == nil then return end
                     local newLabel = data.label
-                    TriggerClientEvent('cdn-fuel:client:updatestationlabels', -1, location, newLabel)
+                    TriggerClientEvent('cwd-fuel:client:updatestationlabels', -1, location, newLabel)
                 else
                     if Config.FuelDebug then print('No Result! (UpdateStationLabel() line 29 station_sv.lua)') end
                     cb(false)
@@ -35,15 +35,15 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
             if Config.FuelDebug then print(newLabel, location) end
             MySQL.Async.execute('UPDATE fuel_stations SET label = ? WHERE `location` = ?', {newLabel, location})
             if src then
-                TriggerClientEvent('cdn-fuel:client:updatestationlabels', src, location, newLabel)
+                TriggerClientEvent('cwd-fuel:client:updatestationlabels', src, location, newLabel)
             else
-                TriggerClientEvent('cdn-fuel:client:updatestationlabels', -1, location, newLabel)
+                TriggerClientEvent('cwd-fuel:client:updatestationlabels', -1, location, newLabel)
             end
         end
     end
     
     -- Events
-    RegisterNetEvent('cdn-fuel:server:updatelocationlabels', function()
+    RegisterNetEvent('cwd-fuel:server:updatelocationlabels', function()
         local src = source
         local location = 0
         for _ in pairs(Config.GasStations) do
@@ -52,7 +52,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:server:buyStation', function(location, CitizenID)
+    RegisterNetEvent('cwd-fuel:server:buyStation', function(location, CitizenID)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         local CostOfStation = Config.GasStations[location].cost + GlobalTax(Config.GasStations[location].cost)
@@ -62,7 +62,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:server:sellstation', function(location)
+    RegisterNetEvent('cwd-fuel:stations:server:sellstation', function(location)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         local GasStationCost = Config.GasStations[location].cost + GlobalTax(Config.GasStations[location].cost)
@@ -77,7 +77,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:Withdraw', function(amount, location, StationBalance)
+    RegisterNetEvent('cwd-fuel:station:server:Withdraw', function(amount, location, StationBalance)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         local setamount = (StationBalance - amount)
@@ -88,7 +88,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         TriggerClientEvent('QBCore:Notify', src, Lang:t("station_success_withdrew_1")..amount..Lang:t("station_success_withdrew_2"), 'success')
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:Deposit', function(amount, location, StationBalance)
+    RegisterNetEvent('cwd-fuel:station:server:Deposit', function(amount, location, StationBalance)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         local setamount = (StationBalance + amount)
@@ -101,7 +101,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:stations:server:Shutoff', function(location)
+    RegisterNetEvent('cwd-fuel:stations:server:Shutoff', function(location)
         local src = source
         if Config.FuelDebug then print("Toggling Emergency Shutoff Valves for Location #"..location) end
         Config.GasStations[location].shutoff = not Config.GasStations[location].shutoff
@@ -111,14 +111,14 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         if Config.FuelDebug then print(Config.GasStations[location].shutoff) end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:updatefuelprice', function(fuelprice, location)
+    RegisterNetEvent('cwd-fuel:station:server:updatefuelprice', function(fuelprice, location)
         local src = source
         if Config.FuelDebug then print('Attempting to update Location #'..location.."'s Fuel Price to a new price: $"..fuelprice) end
         MySQL.Async.execute('UPDATE fuel_stations SET fuelprice = ? WHERE `location` = ?', {fuelprice, location})
         TriggerClientEvent('QBCore:Notify', src, Lang:t("station_fuel_price_success")..fuelprice..Lang:t("station_per_liter"), 'success')
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:updatereserves', function(reason, amount, currentlevel, location)
+    RegisterNetEvent('cwd-fuel:station:server:updatereserves', function(reason, amount, currentlevel, location)
         if reason == "remove" then
             NewLevel = (currentlevel - amount)
         elseif reason == "add" then
@@ -131,7 +131,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         if Config.FuelDebug then print('Successfully executed the previous SQL Update!') end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:updatebalance', function(reason, amount, StationBalance, location, FuelPrice)
+    RegisterNetEvent('cwd-fuel:station:server:updatebalance', function(reason, amount, StationBalance, location, FuelPrice)
         if Config.FuelDebug then print("Amount: "..amount) end
         local Price = (FuelPrice * tonumber(amount))
         local StationGetAmount = math.floor(Config.StationFuelSalePercentage * Price)
@@ -148,7 +148,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
     end)
 
 
-    RegisterNetEvent('cdn-fuel:stations:server:buyreserves', function(location, price, amount)
+    RegisterNetEvent('cwd-fuel:stations:server:buyreserves', function(location, price, amount)
         local location = location
         local price = math.ceil(price)
         local amount = amount
@@ -187,7 +187,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                     ['refuelAmount'] = NewAmount,
                     ['amountBought'] = amount,
                 }
-                TriggerClientEvent('cdn-fuel:station:client:initiatefuelpickup', src, amount, NewAmount, location)
+                TriggerClientEvent('cwd-fuel:station:client:initiatefuelpickup', src, amount, NewAmount, location)
                 if Config.FuelDebug then print("Initiating a Fuel Pickup for Location: "..location.." with for the amount of "..NewAmount.." | Triggered By: Source: "..src) end
             end
 
@@ -196,7 +196,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:fuelpickup:failed', function(location)
+    RegisterNetEvent('cwd-fuel:station:server:fuelpickup:failed', function(location)
         local src = source
         if location then
             if FuelPickupSent[location] then
@@ -208,14 +208,14 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
                 FuelPickupSent[location] = nil
             else
                 if Config.FuelDebug then
-                    print("`cdn-fuel:station:server:fuelpickup:failed` | FuelPickupSent[location] is not valid! Location: "..location)
+                    print("`cwd-fuel:station:server:fuelpickup:failed` | FuelPickupSent[location] is not valid! Location: "..location)
                 end
                 -- They are probably exploiting in some way/shape/form.
             end
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:fuelpickup:finished', function(location)
+    RegisterNetEvent('cwd-fuel:station:server:fuelpickup:finished', function(location)
         local src = source
         if location then
             if FuelPickupSent[location] then
@@ -236,17 +236,17 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
     end)
 
-    RegisterNetEvent('cdn-fuel:station:server:updatelocationname', function(newName, location)
+    RegisterNetEvent('cwd-fuel:station:server:updatelocationname', function(newName, location)
         local src = source
         if Config.FuelDebug then print('Attempting to set name for Location #'..location..' to: '..newName) end
         MySQL.Async.execute('UPDATE fuel_stations SET label = ? WHERE `location` = ?', {newName, location})
         if Config.FuelDebug then print('Successfully executed the previous SQL Update!') end
         TriggerClientEvent('QBCore:Notify', src, Lang:t("station_name_change_success")..newName.."!", 'success')
-        TriggerClientEvent('cdn-fuel:client:updatestationlabels', -1, location, newName)
+        TriggerClientEvent('cwd-fuel:client:updatestationlabels', -1, location, newName)
     end)
 
     -- Callbacks 
-    QBCore.Functions.CreateCallback('cdn-fuel:server:locationpurchased', function(source, cb, location)
+    QBCore.Functions.CreateCallback('cwd-fuel:server:locationpurchased', function(source, cb, location)
         if Config.FuelDebug then print("Working on it.") end
         local result = MySQL.Sync.fetchAll('SELECT * FROM fuel_stations WHERE `location` = ?', {location})
         if result then
@@ -271,7 +271,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
 	end)
 
-    QBCore.Functions.CreateCallback('cdn-fuel:server:doesPlayerOwnStation', function(source, cb)
+    QBCore.Functions.CreateCallback('cwd-fuel:server:doesPlayerOwnStation', function(source, cb)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         local citizenid = Player.PlayerData.citizenid
@@ -287,7 +287,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
 	end)
 
-    QBCore.Functions.CreateCallback('cdn-fuel:server:isowner', function(source, cb, location)
+    QBCore.Functions.CreateCallback('cwd-fuel:server:isowner', function(source, cb, location)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         local citizenid = Player.PlayerData.citizenid
@@ -309,7 +309,7 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
         end
 	end)
 
-    QBCore.Functions.CreateCallback('cdn-fuel:server:fetchinfo', function(source, cb, location)
+    QBCore.Functions.CreateCallback('cwd-fuel:server:fetchinfo', function(source, cb, location)
         local src = source
         local Player = QBCore.Functions.GetPlayer(src)
         if Config.FuelDebug then print("Fetching Information for Location: "..location) end
@@ -323,12 +323,12 @@ if Config.PlayerOwnedGasStationsEnabled then -- This is so Player Owned Gas Stat
 	    end)
 	end)
 
-    QBCore.Functions.CreateCallback('cdn-fuel:server:checkshutoff', function(source, cb, location)
+    QBCore.Functions.CreateCallback('cwd-fuel:server:checkshutoff', function(source, cb, location)
         if Config.FuelDebug then print("Fetching Shutoff State for Location: "..location) end
         cb(Config.GasStations[location].shutoff)
 	end)
     
-    QBCore.Functions.CreateCallback('cdn-fuel:server:fetchlabel', function(source, cb, location)
+    QBCore.Functions.CreateCallback('cwd-fuel:server:fetchlabel', function(source, cb, location)
         if Config.FuelDebug then print("Fetching Shutoff State for Location: "..location) end
         MySQL.Async.fetchAll('SELECT label FROM fuel_stations WHERE location = ?', {location}, function(result)
             if result then

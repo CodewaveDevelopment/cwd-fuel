@@ -1,5 +1,5 @@
 -- Thank you to: https://github.com/Mat40, for the French Locales.
--- PR: https://github.com/CodineDev/cdn-fuel/pull/28/files#diff-7121f3a825660bdad39054bf931e5e1ead1d7f612424d0cae18b40aee4b6082f
+-- PR: https://github.com/CodineDev/cwd-fuel/pull/28/files#diff-7121f3a825660bdad39054bf931e5e1ead1d7f612424d0cae18b40aee4b6082f
 
 local Translations = {
     -- Fuel

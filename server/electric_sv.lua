@@ -8,7 +8,7 @@ local function GlobalTax(value)
 end
 
 -- Events
-RegisterNetEvent("cdn-fuel:server:electric:OpenMenu", function(amount, inGasStation, hasWeapon, purchasetype, FuelPrice)
+RegisterNetEvent("cwd-fuel:server:electric:OpenMenu", function(amount, inGasStation, hasWeapon, purchasetype, FuelPrice)
 	local src = source
 	if not src then print("SRC is nil!") return end
 	local player = QBCore.Functions.GetPlayer(src)
@@ -20,7 +20,7 @@ RegisterNetEvent("cdn-fuel:server:electric:OpenMenu", function(amount, inGasStat
 	Wait(50)
 	if inGasStation and not hasWeapon then
 		if Config.RenewedPhonePayment and purchasetype == "bank" then
-			TriggerClientEvent("cdn-fuel:client:electric:phone:PayForFuel", src, amount)
+			TriggerClientEvent("cwd-fuel:client:electric:phone:PayForFuel", src, amount)
 		else
 			if Config.Ox.Menu then
 				TriggerClientEvent('cdn-electric:client:OpenContextMenu', src, math.ceil(total), amount, purchasetype)
@@ -42,7 +42,7 @@ RegisterNetEvent("cdn-fuel:server:electric:OpenMenu", function(amount, inGasStat
 						icon = "fas fa-check-circle",
 						txt = Lang:t("menu_electric_accept"),
 						params = {
-							event = "cdn-fuel:client:electric:ChargeVehicle",
+							event = "cwd-fuel:client:electric:ChargeVehicle",
 							args = {
 								fuelamounttotal = amount,
 								purchasetype = purchasetype,
